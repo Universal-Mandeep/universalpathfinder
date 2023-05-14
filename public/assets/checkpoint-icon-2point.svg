@@ -1,0 +1,13 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="checkpoint-icon-2point">
+<path id="checkpoint-path" d="M13.0001 13C64.0001 13 53.96 27.0098 31.5 32.5C9 38 0 51.5 51 51.5" stroke="black" stroke-width="1.5"/>
+<g id="checkpoint-icon-start-node">
+<circle id="Ellipse 3" cx="12.5" cy="12.5" r="7.5" fill="black"/>
+<circle id="Ellipse 4" cx="12.5" cy="12.5001" r="6.96429" fill="#36BDE6"/>
+</g>
+<g id="checkpoint-icon-end-node">
+<circle id="Ellipse 3_2" cx="51.5" cy="51.5" r="7.5" fill="black"/>
+<circle id="Ellipse 4_2" cx="51.5" cy="51.5001" r="6.96429" fill="#FE9C09"/>
+</g>
+</g>
+</svg>
