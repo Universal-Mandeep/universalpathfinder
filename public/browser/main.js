@@ -96,13 +96,12 @@ checkpointButton.addEventListener("click", e => {
   board.toggleCheckpoint();
 
 
-  console.log(checkpointButton.dataset.active)
+  // console.log(checkpointButton.dataset.active)
   if (checkpointButton.dataset.active === "false") checkpointButton.dataset.active = "true"
   else checkpointButton.dataset.active = "false"
 
-  console.log(checkpointButton.dataset.active)
-
-
+  // console.log(checkpointButton.dataset.active)
+  board.visualizePathAlgo("instant")
 })
 
 
@@ -131,6 +130,25 @@ function elementToNodeObject(element) {
   const targetCol = element.id.split("-")[1];
   return board.boardGrid[targetRow][targetCol];
 }
+
+
+
+
+//* speed controls
+const speedvalues = document.querySelectorAll(".speed-value");
+speedvalues.forEach(speedvalue => {
+  speedvalue.addEventListener("click", e => {
+    if (!speedvalue.classList.contains("selected")) {
+      document.querySelector(".speed-value.selected").classList.remove("selected");
+      speedvalue.classList.add("selected");
+
+      board.setPathAlgoSpeed(Number(e.target.innerText))
+    }
+  })
+});
+
+
+
 
 
 //* handle board events
@@ -429,9 +447,9 @@ primsMazeAlgoButton.addEventListener("click", e => {
   // board.updateNeighborsForPathAlgo();
 })
 const bfsMazeAlgoButton = document.getElementById("randomizedBfs");
-bfsMazeAlgoButton.addEventListener("click", e => {
-  randomizedBfs();
-})
+// bfsMazeAlgoButton.addEventListener("click", e => {
+//   randomizedBfs();
+// })
 const dfsMazeAlgoButton = document.getElementById("randomizedDfs");
 dfsMazeAlgoButton.addEventListener("click", e => {
   randomizedDfs(board.boardGrid);

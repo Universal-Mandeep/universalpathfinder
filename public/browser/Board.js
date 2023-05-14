@@ -741,11 +741,28 @@ export default class Board {
   //   }
   // }
 
+  setPathAlgoSpeed(newSpeed) {
+    if (newSpeed === 60) {
+      this.speed = "fast";
+      return;
+    }
+    if (newSpeed === 40) {
+      this.speed = "medium";
+      return;
+    }
+
+    this.speed = "slow";
+  }
+
   handlePathAlgoSpeed() {
     if (this.speed === "fast") {
+      // return 0;
+      return 10;
+      return 16.66;
       return 0;
     }
     if (this.speed === "medium") {
+      return 33.33;
       return 25;
     }
 
