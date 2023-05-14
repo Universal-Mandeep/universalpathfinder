@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Path Finding</title>
+    <link rel="stylesheet" href="public/styles/basic.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav-items">
+        <div class="left">
+          <div id="logo">Path Finder</div>
+          <div class="dropdown path-algo" data-dropdown-active="false">
+            <div class="dropdown-label">Path Algorithms
+
+              <!-- <div class="dropdown-label">PATH ALGORITHMS</div> -->
+              <div class="carrot">></div>
+            </div>
+
+            <ul class="dropdown-list">
+              <li class="dropdown-list-item">Dijkstra</li>
+              <li class="dropdown-list-item">A Star</li>
+              <li class="dropdown-list-item">Best First Search</li>
+              <li class="dropdown-list-item">BFS</li>
+              <li class="dropdown-list-item">DFS</li>
+            </ul>
+          </div>
+          <div class="dropdown maze-algo" data-dropdown-active="false">
+            <div class="dropdown-label">Maze Algorithms</div>
+            <ul class="dropdown-list">
+              <li class="dropdown-list-item" id="randomizedKruskals">Randomized Kruskals</li>
+              <li class="dropdown-list-item" id="randomizedPrims">Randomized Prims</li>
+              <!-- <li class="dropdown-list-item" id="randomizedBfs">Randomized BFS</li> -->
+              <li class="dropdown-list-item" id="randomizedDfs">Randomized DFS</li>
+              <li class="dropdown-list-item" id="randomizedBasic">Basic Random</li>
+            </ul>
+          </div>
+        </div>
+        <div class="visualize-btn ">Visualize</div>
+        <div class="right">
+          <div class="options">
+            <div class="checkpoint-diagonal">
+              <div class="checkpoint-btn toggle-btn" data-active="false">checkpoint</div>
+              <!-- <div class="divider"></div> -->
+              <div class="diagonal-btn toggle-btn" data-active="false">diagonal</div>
+            </div>
+            <div class="divider"></div>
+
+            
+
+            <div class="dropdown  speed-btn" data-dropdown-active="false">
+              <!-- <div class="dropdown-label">Speed: Fast</div> -->
+              <div class="dropdown-label">
+                <svg class="speed-svg" fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                  width="800px" height="800px" viewBox="0 0 593.912 593.912"
+                  xml:space="preserve">
+                  <g>
+                    <g>
+                      <g>
+                        <path d="M564.34,246.605L334.045,113.644c-8.852-5.111-18.896-7.813-29.047-7.813l0,0l0,0c-32.071,0-58.163,26.093-58.163,58.163
+                          v41.521L87.709,113.644c-8.852-5.111-18.896-7.813-29.046-7.813h0l0,0c-32.071,0-58.163,26.093-58.163,58.163v265.923
+                          c0,32.07,26.092,58.164,58.164,58.164c10.149,0,20.193-2.703,29.045-7.812l159.127-91.873v41.521
+                          c0,32.07,26.092,58.164,58.164,58.164c10.15,0,20.193-2.703,29.045-7.812l230.297-132.963
+                          c9.16-5.289,16.695-12.941,21.787-22.129c4.766-8.598,7.283-18.355,7.283-28.221c0-9.867-2.518-19.625-7.283-28.222
+                          C581.035,259.546,573.502,251.894,564.34,246.605z M542.922,310.206L312.625,443.167c-2.465,1.424-5.078,2.072-7.625,2.072
+                          c-7.993,0-15.324-6.391-15.324-15.322v-66.254v-49.469v-34.478v-49.467v-66.254c0-8.932,7.332-15.323,15.324-15.324
+                          c2.547,0,5.16,0.65,7.625,2.073l230.297,132.962C553.121,289.594,553.121,304.317,542.922,310.206z M66.29,443.167
+                          c-2.465,1.424-5.08,2.072-7.626,2.072c-7.993,0-15.324-6.391-15.324-15.322V163.995c0-8.932,7.332-15.323,15.324-15.324
+                          c2.547,0,5.161,0.65,7.626,2.073l180.546,104.238v83.946L66.29,443.167z"/>
+                        <path d="M305,488.581c-32.348,0-58.664-26.316-58.664-58.664v-40.655L87.959,480.701c-8.93,5.155-19.061,7.88-29.295,7.88
+                          C26.316,488.581,0,462.265,0,429.917V163.994c0-32.347,26.316-58.663,58.663-58.663c10.238,0,20.369,2.725,29.297,7.88
+                          l158.376,91.438v-40.655c0-32.347,26.316-58.663,58.663-58.663c10.238,0,20.369,2.725,29.297,7.88L564.59,246.172
+                          c9.238,5.333,16.838,13.051,21.977,22.32c4.806,8.669,7.346,18.512,7.346,28.464c0,9.951-2.54,19.793-7.346,28.463
+                          c-5.136,9.267-12.734,16.984-21.975,22.319L334.295,480.701C325.364,485.856,315.234,488.581,305,488.581z M247.336,387.529
+                          v42.388c0,31.796,25.868,57.664,57.664,57.664c10.06,0,20.017-2.679,28.795-7.745l230.297-132.963
+                          c9.083-5.245,16.553-12.831,21.6-21.938c4.724-8.522,7.221-18.197,7.221-27.979c0-9.783-2.497-19.458-7.221-27.979
+                          c-5.051-9.11-12.521-16.696-21.602-21.938L333.795,114.077c-8.775-5.067-18.733-7.746-28.797-7.746
+                          c-31.795,0-57.663,25.868-57.663,57.663v42.388L87.459,114.077c-8.776-5.067-18.734-7.746-28.796-7.746
+                          C26.868,106.332,1,132.199,1,163.994v265.923c0,31.796,25.868,57.664,57.664,57.664c10.059,0,20.017-2.679,28.795-7.745
+                          L247.336,387.529z M305,445.739c-8.726,0-15.824-7.098-15.824-15.822V163.995c0-8.724,7.099-15.823,15.824-15.824l0,0
+                          c2.766,0,5.416,0.72,7.875,2.14l230.297,132.962c4.946,2.855,7.899,7.971,7.899,13.682c0,5.713-2.953,10.828-7.899,13.684
+                          L312.875,443.6C310.418,445.02,307.768,445.739,305,445.739z M305,149.171c-8.174,0.001-14.824,6.651-14.824,14.824v265.922
+                          c0,8.173,6.65,14.822,14.824,14.822c2.59,0,5.071-0.675,7.375-2.005l230.297-132.961c4.634-2.676,7.399-7.467,7.399-12.818
+                          c0-5.35-2.767-10.141-7.399-12.816L312.375,151.177C310.069,149.846,307.588,149.171,305,149.171L305,149.171z M58.664,445.739
+                          c-8.726,0-15.824-7.098-15.824-15.822V163.995c0-8.724,7.099-15.823,15.824-15.824l0,0c2.766,0,5.416,0.72,7.876,2.14
+                          l180.796,104.383v84.524l-0.25,0.144L66.54,443.6C64.082,445.02,61.432,445.739,58.664,445.739z M58.664,149.171
+                          c-8.174,0.001-14.824,6.651-14.824,14.824v265.922c0,8.173,6.65,14.822,14.824,14.822c2.591,0,5.072-0.675,7.376-2.005
+                          L246.335,338.64v-83.369L66.04,151.177C63.734,149.846,61.252,149.171,58.664,149.171L58.664,149.171z"/>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+                <!-- <div class="speed-label">Fast</div> -->
+                <!-- <div class="speed-label"></div> -->
+              </div> 
+              <div class="speed-values">
+                <div class="speed-value">10</div>
+                <div class="speed-value">40</div>
+                <div class="speed-value">60</div>
+              </div>
+              <!-- <ul class="dropdown-list">
+                <li class="dropdown-list-item">Fast</li>
+                <li class="dropdown-list-item">Medium</li>
+                <li class="dropdown-list-item">Slow</li>
+              </ul> -->
+            </div>
+          </div>
+
+
+          <div class="other">
+
+            <div class="dropdown clear-board-btn" data-dropdown-active="false">
+              <!-- <div class="dropdown-label">Clear</div> -->
+              <div class="dropdown-label">
+                <svg class="clear-svg" fill="#000000" width="800px" height="800px" viewBox="0 0 1024 1024" t="1569683368540" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9723" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"></style></defs><path d="M899.1 869.6l-53-305.6H864c14.4 0 26-11.6 26-26V346c0-14.4-11.6-26-26-26H618V138c0-14.4-11.6-26-26-26H432c-14.4 0-26 11.6-26 26v182H160c-14.4 0-26 11.6-26 26v192c0 14.4 11.6 26 26 26h17.9l-53 305.6c-0.3 1.5-0.4 3-0.4 4.4 0 14.4 11.6 26 26 26h723c1.5 0 3-0.1 4.4-0.4 14.2-2.4 23.7-15.9 21.2-30zM204 390h272V182h72v208h272v104H204V390z m468 440V674c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v156H416V674c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v156H202.8l45.1-260H776l45.1 260H672z" p-id="9724"></path></svg>
+              </div>
+              <ul class="dropdown-list">
+                <li class="dropdown-list-item">Clear paths</li>
+                <li class="dropdown-list-item">Clear blocks</li>
+                <li class="dropdown-list-item">Clear board</li>
+              </ul>
+            </div>
+            <!-- <div class="info-btn">i</div> -->
+            <div class="info-btn">
+              <svg class="info-svg" fill="#000000" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 Z M12,21 C16.9705627,21 21,16.9705627 21,12 C21,7.02943725 16.9705627,3 12,3 C7.02943725,3 3,7.02943725 3,12 C3,16.9705627 7.02943725,21 12,21 Z M13.0036109,13.9983464 L14.0029544,13.9983464 L14.0029544,15.9983464 L10.0029544,15.9983464 L10.0029544,13.9983464 L11.0029544,13.9983464 L11.0029544,11.9983464 L10.0029544,11.9983464 L10.0029544,9.99834639 L13.0036109,9.99834639 L13.0036109,13.9983464 Z M12.0003283,8.99834639 C11.4478622,8.99834639 11,8.55063114 11,7.99834639 C11,7.44606164 11.4478622,6.99834639 12.0003283,6.99834639 C12.5527943,6.99834639 13.0006565,7.44606164 13.0006565,7.99834639 C13.0006565,8.55063114 12.5527943,8.99834639 12.0003283,8.99834639 Z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        
+        
+      </div>
+    </nav>
+
+    <section class="aside-boardgrid">
+      <!-- <aside class="side-nav">
+        <div class="top">
+          <div class="checkpoint-btn btn" data-active="false"></div>
+          <div class="diagonal-btn btn" data-active="false">D</div>
+          <div class="weight-btn btn" title="ctrl + left click">W</div>
+        </div>
+        <div class="bottom">
+          <div class="speeed-btn btn second-last"></div>
+          <div class="info-btn btn"></div>
+        </div>
+      </aside> -->
+      <section id="board-grid"></section>
+    </section>
+
+
+    <div class="node-info-card" data-info-card-active="false">
+      <div class="list">
+        <div class="row1">
+          <span class="id-info info">#15-23</span>
+          <span class="node-type-info info">.unvisited</span>
+        </div>
+        <div class="row2">
+          <span class="label">node-weight:</span>
+          <span class="value">10</span>
+        </div>
+        <div class="row3">
+          <div class="label">neighbors</div>
+          <div class="neighbor-value-list">
+            <!-- <span class="neighbor-value"></span> -->
+          </div>
+        </div>
+        <div class="carot"></div>
+        <div class="highlighter">
+          <div class="corner top-right"></div>
+          <div class="corner bottom-right"></div>
+          <div class="corner bottom-left"></div>
+          <div class="corner top-left"></div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <script type="module" src="public/browser/main.js"></script>
+  </body>
+</html>
