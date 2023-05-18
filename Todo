@@ -104,3 +104,26 @@
 
 boardGrid[9][15] is unvisited.... how...??
 boardGrid[9][40] is unvisited.... how...??
+
+# Simple todo
+
+-path algo
+[+] DIjkstra
+[+] A
+[+] Greedy Best First
+[ ] BFS
+[ ] DFS
+
+-maze algo
+[+] Randomized Kruskals
+[ ] Randomized Prims
+[ ] Randomized DFS
+[ ] Random Blocks
+[ ] Random Weight
+
+-Features
+[+] checkpoint
+[+] diagonal
+[+] speed
+[+] clear
+[ ] info

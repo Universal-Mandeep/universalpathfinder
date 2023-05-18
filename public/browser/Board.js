@@ -103,6 +103,13 @@ export default class Board {
     }
   }
 
+  redrawSpecialNodes() {
+    this.setStartNode(this.startNode);
+    this.setEndNode(this.endNode);
+    if (this.boardProperties.hasCheckpoint) this.setCheckpointNode(this.cpoint)
+  }
+
+
   // setBlockNode(newBlock){
   //   if(thi)
   // }  
@@ -221,6 +228,7 @@ export default class Board {
       for (let node of nodeRow) {
         if (node !== this.startNode && node !== this.endNode) {
           node.updateNodeTypeInstant("unvisited");
+          node.makeUnweighted()
         }
       }
     }
@@ -242,13 +250,40 @@ export default class Board {
     // this.boardProperties.instantPath = false;
   }
 
+  clearBlocks() {
+    for (let nodeRow of this.boardGrid) {
+      for (let node of nodeRow) {
+        // if (node !== this.startNode && node !== this.cpoint && node !== this.endNode && node.nodeType !== "block") {
+        if (node.nodeType === "block") {
+          node.updateNodeTypeInstant("unvisited");
+        }
+      }
+    }
+  }
+
+  clearWeights() {
+    console.log("in board")
+    console.log(this.boardGrid[0][0])
+    for (let nodeRow of this.boardGrid) {
+      for (let node of nodeRow) {
+        console.log(node.isWeighted)
+        // if (node !== this.startNode && node !== this.cpoint && node !== this.endNode && node.nodeType !== "block") {
+        if (node.isWeighted) {
+          node.makeUnweighted()
+          // node.updateNodeTypeInstant("unvisited");
+        }
+      }
+    }
+  }
+
 
 
   clearVisitedNodesAndUpdateBoardStatus() {
     for (let nodeRow of this.boardGrid) {
       for (let node of nodeRow) {
         // if (node !== this.startNode && node !== this.endNode && !node.linkedElement.matches(".block") && !node.linkedElement.matches(".weighted")) {
-        if (node !== this.startNode && node !== this.cpoint && node !== this.endNode && !node.linkedElement.matches(".block")) {
+        // if (node !== this.startNode && node !== this.cpoint && node !== this.endNode && !node.linkedElement.matches(".block")) {
+        if (node.nodeType == "visited" || node.nodeType == "visited-2" || node.nodeType == "path") {
           node.updateNodeTypeInstant("unvisited");
         }
       }
@@ -413,7 +448,7 @@ export default class Board {
     if (this.boardProperties.hasCheckpoint === true) {
       // remove checkpoint
       this.cpoint.updateNodeType("unvisited");
-      this.cpoint = null
+      this.cpoint = null;
       this.boardProperties.hasCheckpoint = false;
     }
     else {
@@ -435,6 +470,7 @@ export default class Board {
     this.setCheckpointNode(this.cpoint)
     this.setEndNode(this.endNode)
 
+    document.querySelector(':root').style.setProperty('--board-background', '#ffffff')
     this.clearVisitedNodes();
     this.updateNeighborsForPathAlgo();
 
@@ -487,12 +523,15 @@ export default class Board {
     let visitedType = visitedNodesSCE[iterator][0]
     let visitedNodesInOrder = visitedNodesSCE[iterator][1]
 
+
     const algoSpeed = this.handlePathAlgoSpeed()
+    // let pos = 0;
     let viz = setInterval(() => {
       this.setStartNode(this.startNode);
       this.setCheckpointNode(this.cpoint);
       this.setEndNode(this.endNode);
 
+      // if (visitedNodesInOrder.length === pos + 1 && visitedNodesSCE.length === iterator + 1) {
       if (!visitedNodesInOrder.length && visitedNodesSCE.length === iterator + 1) {
         clearInterval(viz);
         this.drawPathWithAnnimation(pathFromEndToStart);
@@ -500,17 +539,20 @@ export default class Board {
       }
 
       if (visitedNodesInOrder.length === 0) {
+        // if (visitedNodesInOrder.length === pos + 1) {
         iterator++;
         visitedType = visitedNodesSCE[iterator][0]
         visitedNodesInOrder = visitedNodesSCE[iterator][1]
-        // console.log(visitedNodesInOrder)
+        // pos = 0;
       }
 
       let currentNode = visitedNodesInOrder[0];
+      // let currentNode = visitedNodesInOrder[pos];
       if (currentNode.nodeType !== "start" || currentNode.nodeType !== "checkpoint" || currentNode.nodeType !== "end") {
         currentNode.updateNodeType(visitedType);
       }
       visitedNodesInOrder.shift();
+      // pos++;
     }, algoSpeed);
   }
 
@@ -756,7 +798,7 @@ export default class Board {
 
   handlePathAlgoSpeed() {
     if (this.speed === "fast") {
-      // return 0;
+      return 0;
       return 10;
       return 16.66;
       return 0;

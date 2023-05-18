@@ -35,72 +35,119 @@ function closeAllDropdown() {
 
 
 //* nav bar events
-const dropdownList = document.querySelectorAll(".dropdown");
-for (let dropdown of dropdownList) {
+
+
+
+// const pathAlgoDropdown = document.querySelector(".path-algo")
+// pathAlgoDropdown.addEventListener("click", e => {
+//   const activeDropdown = document.querySelector('[data-dropdown-active = "true"]');
+//   if (activeDropdown == null) {
+//     pathAlgoDropdown.dataset.dropdownActive = "true";
+//   }
+//   else if (e.target.closest(".dropdown") != activeDropdown) {
+//     activeDropdown.dataset.dropdownActive = "false";
+//     pathAlgoDropdown.dataset.dropdownActive = "true";
+//   }
+//   else {
+//     if (e.target.closest(".dropdown") == activeDropdown && e.target.closest(".dropdown-list")) {
+//       pathAlgoDropdown.querySelector(".dropdown-label").getElementsByTagName("span")[0].innerText = e.target.innerText
+//       board.selectedPathAlgo = e.target.innerText;
+//     }
+//     activeDropdown.dataset.dropdownActive = "false";
+//   }
+// })
+
+
+// const mazeAlgoDropdown = document.querySelector(".maze-algo")
+// mazeAlgoDropdown.addEventListener("click", e => {
+//   const activeDropdown = document.querySelector('[data-dropdown-active = "true"]');
+
+//   if (activeDropdown == null) {
+//     mazeAlgoDropdown.dataset.dropdownActive = "true";
+//   }
+//   else if (e.target.closest(".dropdown") != activeDropdown) {
+//     activeDropdown.dataset.dropdownActive = "false";
+//     mazeAlgoDropdown.dataset.dropdownActive = "true";
+//   }
+//   else {
+//     if (e.target.closest(".dropdown") == activeDropdown && e.target.closest(".dropdown-list")) {
+//       mazeAlgoDropdown.querySelector(".dropdown-label").getElementsByTagName("span")[0].innerText = e.target.innerText
+//       board.selectedMazeAlgo = e.target.innerText;
+//     }
+//     activeDropdown.dataset.dropdownActive = "false";
+//   }
+// })
+
+
+
+const dropdownList = document.querySelectorAll(".dropdown")
+dropdownList.forEach(dropdown => {
   dropdown.addEventListener("click", e => {
     const activeDropdown = document.querySelector('[data-dropdown-active = "true"]');
+
     if (activeDropdown == null) {
       dropdown.dataset.dropdownActive = "true";
     }
+    else if (e.target.closest(".dropdown") != activeDropdown) {
+      activeDropdown.dataset.dropdownActive = "false";
+      dropdown.dataset.dropdownActive = "true";
+    }
     else {
-      if (e.target.closest(".dropdown") == activeDropdown) {
-        if (e.target.closest(".dropdown-list") && dropdown.matches(".speed-btn")) {
-          dropdown.querySelector(".dropdown-label").innerText = `Speed: ${e.target.innerText}`
-          board.speed = e.target.innerText.toLowerCase();
+      if (e.target.closest(".dropdown") == activeDropdown && e.target.closest(".dropdown-list")) {
+        if (e.target.closest(".maze-algo")) {
+          dropdown.querySelector(".dropdown-label").getElementsByTagName("span")[0].innerText = e.target.innerText
+          board.selectedMazeAlgo = e.target.innerText;
+          handleMazeAlgo(e.target.innerText);
         }
-        else if (dropdown.matches(".clear-board-btn")) {
-          if (e.target.innerText === "Clear paths") {
-            board.clearVisitedNodesAndUpdateBoardStatus()
-            // board.clearVisitedNodes()
-            // board.boardProperties.instantPath = false;
-          }
+        else if (e.target.closest(".path-algo")) {
+          dropdown.querySelector(".dropdown-label").getElementsByTagName("span")[0].innerText = e.target.innerText
+          board.selectedPathAlgo = e.target.innerText;
         }
-        else {
-          dropdown.querySelector(".dropdown-label").innerText = e.target.innerText
-          if (dropdown.matches(".path-algo")) {
-            board.selectedPathAlgo = e.target.innerText;
-          }
-          else if (dropdown.matches(".maze-algo")) {
-            board.selectedMazeAlgo = e.target.innerText;
-          }
+        else if (e.target.closest(".clear-board-btn")) {
+          handleClearDropdown(e.target.innerText)
         }
-        activeDropdown.dataset.dropdownActive = "false";
       }
-      else {
-        activeDropdown.dataset.dropdownActive = "false";
-        dropdown.dataset.dropdownActive = "true";
-      }
+      activeDropdown.dataset.dropdownActive = "false";
     }
   })
+})
+
+
+function handleClearDropdown(clearType) {
+  if (clearType.toLowerCase() === "clear paths") {
+    board.clearVisitedNodesAndUpdateBoardStatus()
+  }
+  else if (clearType.toLowerCase() === "clear blocks") {
+    board.clearBlocks()
+  }
+  else if (clearType.toLowerCase() === "clear weights") {
+    board.clearWeights()
+  }
+  else if (clearType.toLowerCase() === "reset board") {
+    board.resetBoardGrid()
+  }
 }
+
+
+
 
 document.querySelector(".visualize-btn").addEventListener("click", e => {
   closeAllDropdown();
   board.visualizePathAlgo()
-  // if (board.boardProperties.hasCheckpoint) {
-  //   board.visualizePathAlgo()
-  // } else {
-  //   board.visualizePathAlgoCheckpoint()
-  //   // board.visualizePathAlgo()
-  // }
 })
 
 
-//* aside button itegration
+//* nav btn integrations
 
+// checkpoint DONE
 const checkpointButton = document.querySelector(".checkpoint-btn");
 checkpointButton.addEventListener("click", e => {
-  // console.log("checkpoint is clicked")
-  // board.addCheckpoint();
-
   board.toggleCheckpoint();
 
-
-  // console.log(checkpointButton.dataset.active)
+  // visual toggle of checkpoint btn
   if (checkpointButton.dataset.active === "false") checkpointButton.dataset.active = "true"
   else checkpointButton.dataset.active = "false"
 
-  // console.log(checkpointButton.dataset.active)
   board.visualizePathAlgo("instant")
 })
 
@@ -134,7 +181,7 @@ function elementToNodeObject(element) {
 
 
 
-//* speed controls
+//* speed controls DONE
 const speedvalues = document.querySelectorAll(".speed-value");
 speedvalues.forEach(speedvalue => {
   speedvalue.addEventListener("click", e => {
@@ -435,24 +482,59 @@ function getOffset(el) {
 
 
 //* linking maze algorithms
+
+
+function handleMazeAlgo(mazeAlgo) {
+  console.log(mazeAlgo)
+  document.querySelector(':root').style.setProperty('--board-background', '#111111')
+
+  if (mazeAlgo.toLowerCase() === "randomized kruskals") {
+    randomizedKruskals(board.boardGrid, resetBoardColor);
+  }
+  if (mazeAlgo.toLowerCase() === "randomized prims") {
+    board.resetBoardGridForMaze();
+    randomizedPrims(board.startNode, board.boardGrid, resetBoardColor);
+
+  }
+}
+
+function resetBoardColor() {
+  board.redrawSpecialNodes();
+  setTimeout(() => {
+    document.querySelector(':root').style.setProperty('--board-background', '#ffffff')
+  }, 750)
+  // 750ms: It is the animation time of the unvisited node
+}
+
+
+
 const kruskalMazeAlgoButton = document.getElementById("randomizedKruskals");
 kruskalMazeAlgoButton.addEventListener("click", e => {
-  randomizedKruskals(board.boardGrid);
+  // randomizedKruskals(board.boardGrid);
 })
 const primsMazeAlgoButton = document.getElementById("randomizedPrims");
 primsMazeAlgoButton.addEventListener("click", e => {
-  board.resetBoardGridForMaze();
-  // board.updateNeighborsForMazeAlgo();
-  randomizedPrims(board.startNode, board.boardGrid);
-  // board.updateNeighborsForPathAlgo();
+  // board.resetBoardGridForMaze();
+  // randomizedPrims(board.startNode, board.boardGrid);
 })
+
 const bfsMazeAlgoButton = document.getElementById("randomizedBfs");
-// bfsMazeAlgoButton.addEventListener("click", e => {
-//   randomizedBfs();
-// })
+bfsMazeAlgoButton.addEventListener("click", e => {
+  //   randomizedBfs();
+})
+
 const dfsMazeAlgoButton = document.getElementById("randomizedDfs");
 dfsMazeAlgoButton.addEventListener("click", e => {
-  randomizedDfs(board.boardGrid);
+  // randomizedDfs(board.boardGrid);
+})
+
+const randomizedBlocksButton = document.getElementById("randomizedBlocks");
+randomizedBlocksButton.addEventListener("click", e => {
+  console.log("randomizedBlocksButton")
+})
+const randomizedWeightsButton = document.getElementById("randomizedWeights");
+randomizedWeightsButton.addEventListener("click", e => {
+  console.log("randomizedWeightsButton")
 })
 
 
@@ -518,4 +600,47 @@ function handleKeyboardEvents(board) {
 }
 
 
+
+
+//! OLD CODE
+
+//* OLD NAV dropdown
+// const dropdownList = document.querySelectorAll(".dropdown");
+// for (let dropdown of dropdownList) {
+//   dropdown.addEventListener("click", e => {
+//     const activeDropdown = document.querySelector('[data-dropdown-active = "true"]');
+//     if (activeDropdown == null) {
+//       dropdown.dataset.dropdownActive = "true";
+//     }
+//     else {
+//       if (e.target.closest(".dropdown") == activeDropdown) {
+//         if (e.target.closest(".dropdown-list") && dropdown.matches(".speed-btn")) {
+//           dropdown.querySelector(".dropdown-label").innerText = `Speed: ${e.target.innerText}`
+//           board.speed = e.target.innerText.toLowerCase();
+//         }
+//         else if (dropdown.matches(".clear-board-btn")) {
+//           if (e.target.innerText === "Clear paths") {
+//             board.clearVisitedNodesAndUpdateBoardStatus()
+//             // board.clearVisitedNodes()
+//             // board.boardProperties.instantPath = false;
+//           }
+//         }
+//         else {
+//           dropdown.querySelector(".dropdown-label").innerText = e.target.innerText
+//           if (dropdown.matches(".path-algo")) {
+//             // board.selectedPathAlgo = e.target.innerText;
+//           }
+//           else if (dropdown.matches(".maze-algo")) {
+//             board.selectedMazeAlgo = e.target.innerText;
+//           }
+//         }
+//         activeDropdown.dataset.dropdownActive = "false";
+//       }
+//       else {
+//         activeDropdown.dataset.dropdownActive = "false";
+//         dropdown.dataset.dropdownActive = "true";
+//       }
+//     }
+//   })
+// }
 

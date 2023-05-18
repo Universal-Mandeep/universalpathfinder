@@ -21,10 +21,13 @@ function connectTwoNodes(neighbor, current, boardGrid) {
 
 }
 
+
 function getRandomItem(set) {
   let items = Array.from(set);
   return items[Math.floor(Math.random() * items.length)];
 }
+
+
 
 function getNeighbors(node, boardGrid) {
   // let nodeRow = parseInt(node.id.split("-")[0])
@@ -75,9 +78,10 @@ function getNeighbors(node, boardGrid) {
   return newNeighbors;
 }
 
-export default function randomizedPrims(startNode, boardGrid) {
+export default function randomizedPrims(startNode, boardGrid, terminationCallback) {
   console.log("Randomized Prims algo called...")
   makeAllBlock(boardGrid)
+
   let mazeStart = startNode;
   let pathTree = [];  // node.id: string
 
@@ -87,7 +91,7 @@ export default function randomizedPrims(startNode, boardGrid) {
   frontier.add(mazeStart);
 
   let current = null;
-  console.log(boardGrid[10][2])
+  // console.log(boardGrid[10][2])
 
   let viz = setInterval(() => {
 
@@ -95,8 +99,10 @@ export default function randomizedPrims(startNode, boardGrid) {
     if (!frontier.size) {
       clearInterval(viz);
       console.log("finished")
-      console.log(pathTree)
-      drawPath(pathTree)
+      terminationCallback();
+
+      // console.log(pathTree)
+      // drawPath(pathTree)
       return;
     }
 
@@ -113,9 +119,8 @@ export default function randomizedPrims(startNode, boardGrid) {
 
     frontier.delete(randomNode);
     randomNode.linkedElement.classList.remove("frontier")
-    randomNode.linkedElement.classList.remove("pink")
+    // randomNode.linkedElement.classList.remove("pink")
 
-    // console.log(frontier.has(boardGrid[10][10]))
     visited.add(randomNode);
     let isConnected = false;
     // for (let neighbor of randomNode.neighbors) {
@@ -123,26 +128,27 @@ export default function randomizedPrims(startNode, boardGrid) {
 
     // let neighbors = getNeighbors(randomNode, boardGrid)
     let neighbors = []
-    const nodeRow = Number(randomNode.id.split("-")[0])
-    const nodeCol = Number(randomNode.id.split("-")[1])
 
-    const rows = boardGrid.length;
-    const cols = boardGrid[0].length;
+    // const nodeRow = Number(randomNode.id.split("-")[0])
+    // const nodeCol = Number(randomNode.id.split("-")[1])
 
-    let newNeighbors = [];
-    //top neighbor
-    if (nodeRow > 1) newNeighbors.push(boardGrid[nodeRow - 2][nodeCol])
+    // const rows = boardGrid.length;
+    // const cols = boardGrid[0].length;
 
-    // right neighbor
-    if (nodeCol < cols - 2) newNeighbors.push(boardGrid[nodeRow][nodeCol + 2])
+    // let newNeighbors = [];
+    // //top neighbor
+    // if (nodeRow > 1) newNeighbors.push(boardGrid[nodeRow - 2][nodeCol])
 
-    // bottom neighbor
-    if (nodeRow < rows - 2) newNeighbors.push(boardGrid[nodeRow + 2][nodeCol])
+    // // right neighbor
+    // if (nodeCol < cols - 2) newNeighbors.push(boardGrid[nodeRow][nodeCol + 2])
 
-    // left neighbor
-    if (nodeCol > 1) newNeighbors.push(boardGrid[nodeRow][nodeCol - 2])
+    // // bottom neighbor
+    // if (nodeRow < rows - 2) newNeighbors.push(boardGrid[nodeRow + 2][nodeCol])
 
-    neighbors = [...newNeighbors]
+    // // left neighbor
+    // if (nodeCol > 1) newNeighbors.push(boardGrid[nodeRow][nodeCol - 2])
+
+    // neighbors = [...newNeighbors]
 
 
 
@@ -172,12 +178,18 @@ export default function randomizedPrims(startNode, boardGrid) {
     if (randomConnection) {
       let midNode = connectTwoNodes(randomConnection, randomNode, boardGrid);
       pathTree.push(midNode)
+      // midNode.updateNodeType("unvisited")
+      midNode.updateNodeType("unvisited-animate")
     }
 
     pathTree.push(randomNode)
+    // randomNode.updateNodeType("unvisited")
+    randomNode.updateNodeType("unvisited-animate")
+
 
     // }
-  }, 10);
+    // }, 10);
+  }, 16.66);
 
 }
 
@@ -208,7 +220,7 @@ function makeAllBlock(boardGrid) {
   }
 }
 
-export function randomizedKruskals(boardGrid) {
+export function randomizedKruskals(boardGrid, terminationCallback) {
   console.log("Randomized Kruskals algo called...")
 
   const clusters = {};
@@ -352,10 +364,10 @@ export function randomizedKruskals(boardGrid) {
 
   makeAllBlock(boardGrid)
   // drawKruskalMaze(weightedEdges, solution)
-  drawKruskalMaze2(solution2)
+  drawKruskalMaze2(solution2, terminationCallback)
 }
 
-function drawKruskalMaze2(edges) {
+function drawKruskalMaze2(edges, terminationCallback) {
 
   // let currentEdge = weightedEdges[0]
   // console.log(weightedEdges)
@@ -368,10 +380,14 @@ function drawKruskalMaze2(edges) {
   console.log(edges[0])
   // let currentSource = weightedEdges[0].source
   // let currentMid = weightedEdges.source
+
   const wizard = setInterval(() => {
     if (!edges.length) {
-      clearInterval(wizard)
-      console.log("done path")
+      clearInterval(wizard);
+      console.log("done path");
+      terminationCallback();
+      // document.querySelector(':root').style.setProperty('--board-background', '#ffffff')
+
       return;
     }
     currentEdge = edges[0]
@@ -379,17 +395,37 @@ function drawKruskalMaze2(edges) {
     // currentSource = weightedEdges[0].source;
     // currentSource.updateNodeType("block")
     // console.log(currentEdge)
-    currentEdge.source.updateNodeType("unvisited")
-    currentEdge.mid.updateNodeType("unvisited")
-    currentEdge.target.updateNodeType("unvisited")
+
+
+    // currentEdge.source.updateNodeType("unvisited")
+    // currentEdge.mid.updateNodeType("unvisited")
+    // currentEdge.target.updateNodeType("unvisited")
+    currentEdge.source.updateNodeType("unvisited-animate")
+    currentEdge.mid.updateNodeType("unvisited-animate")
+    currentEdge.target.updateNodeType("unvisited-animate")
+
+
+
     // currentEdge.source.updateNodeType("block")
     // currentEdge.mid.updateNodeType("block")
     // currentEdge.target.updateNodeType("block")
     // weightedEdges.shift()
     edges.shift()
+    // }, 0)
+    // }, 20)
   }, 25)
 
+  // console.log("FOR LOOP")
+  // for (let edge of edges) {
+  //   edge.source.updateNodeType("unvisited")
+  //   edge.mid.updateNodeType("unvisited")
+  //   edge.target.updateNodeType("unvisited")
+  // }
+  // console.log("DONE")
+
+
 }
+
 
 function drawKruskalMaze(weightedEdges, edgeIds) {
   // let currentEdge = weightedEdges[0]

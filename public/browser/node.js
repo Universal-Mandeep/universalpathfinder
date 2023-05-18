@@ -72,6 +72,9 @@ export default class Node {
     if (newNodeType === "block" || newNodeType === "weighted" || newNodeType === "visited" || newNodeType === "path") {
       this.linkedElement.dataset.animationType = "animate";
     }
+    else if (newNodeType.includes("animate")) {
+      this.linkedElement.dataset.animationType = "animate";
+    }
     else {
       this.linkedElement.dataset.animationType = "instant";
     }
