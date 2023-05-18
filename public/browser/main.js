@@ -486,6 +486,7 @@ function getOffset(el) {
 
 function handleMazeAlgo(mazeAlgo) {
   console.log(mazeAlgo)
+  board.resetBoardGridForMaze()
   document.querySelector(':root').style.setProperty('--board-background', '#111111')
 
   if (mazeAlgo.toLowerCase() === "randomized kruskals") {

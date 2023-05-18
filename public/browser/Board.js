@@ -242,6 +242,7 @@ export default class Board {
       for (let node of nodeRow) {
         if (node !== this.startNode && node !== this.cpoint && node !== this.endNode) {
           node.updateNodeTypeInstant("unvisited");
+          node.makeUnweighted();
         }
       }
     }
