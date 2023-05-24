@@ -116,7 +116,7 @@ boardGrid[9][40] is unvisited.... how...??
 
 -maze algo
 [+] Randomized Kruskals
-[ ] Randomized Prims
+[+] Randomized Prims
 [ ] Randomized DFS
 [ ] Random Blocks
 [ ] Random Weight

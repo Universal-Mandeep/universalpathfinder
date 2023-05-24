@@ -49,10 +49,15 @@ export default class Node {
   }
 
   updateNodeType(newNodeType) {
+    if (newNodeType == this.nodeType) {
+      this.linkedElement.dataset.animationType = "instant";
+    }
     this.handleNodeAnnimation(newNodeType)
+
 
     if (newNodeType === "weighted") {
       this.makeWeighted()
+      // return
     }
     // if (newNodeType === "checkpoint"){
     //   this.makeCheckpoint()
@@ -60,6 +65,8 @@ export default class Node {
     else {
       this.linkedElement.classList.remove(this.nodeType)
       if (newNodeType === "start" || newNodeType === "checkpoint" || newNodeType === "end" || newNodeType === "block") this.makeUnweighted();
+
+      if (newNodeType === "unvisited-3" || newNodeType === "unvisited-2") this.makeUnweighted()
 
       this.nodeType = newNodeType;
       this.linkedElement.classList.add(newNodeType);

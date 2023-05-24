@@ -546,57 +546,227 @@ function neiObj(boardGrid) {
 }
 
 
-export function randomizedDfs(boardGrid) {
-  console.log("Randomized DFS algo called...")
-  // console.log(boardGrid)
+export function randomBlocks(boardGrid) {
+  // console.log("in random blocks")
+  let rows = boardGrid.length
+  let cols = boardGrid[0].length
 
-  let mazeStartRow = Math.floor(Math.random() * boardGrid.length);
-  let mazeStartCol = Math.floor(Math.random() * boardGrid[0].length);
+  let blockCount = 0;
+  let maxBlockCount = (rows * cols) / 5
+
+  while (blockCount < maxBlockCount) {
+    let randomRowIndex = Math.floor(Math.random() * rows);
+    let randomColIndex = Math.floor(Math.random() * cols);
+
+    if (boardGrid[randomRowIndex][randomColIndex].nodeType !== "start"
+      && boardGrid[randomRowIndex][randomColIndex].nodeType !== "end"
+      && boardGrid[randomRowIndex][randomColIndex].nodeType !== "checkpoint") {
+      // boardGrid[randomRowIndex][randomColIndex].updateNodeType("block")
+      boardGrid[randomRowIndex][randomColIndex].updateNodeTypeInstant("block")
+    }
+    // boardGrid[randomRowIndex][randomColIndex].updateNodeType("unvisited-animate")
+
+    blockCount++;
+  }
+}
+
+export function randomWeights(boardGrid) {
+  // console.log("in random blocks")
+  let rows = boardGrid.length
+  let cols = boardGrid[0].length
+
+  let blockCount = 0;
+  let maxBlockCount = (rows * cols) / 5
+
+  while (blockCount < maxBlockCount) {
+    let randomRowIndex = Math.floor(Math.random() * rows);
+    let randomColIndex = Math.floor(Math.random() * cols);
+
+    if (boardGrid[randomRowIndex][randomColIndex].nodeType !== "start"
+      && boardGrid[randomRowIndex][randomColIndex].nodeType !== "end"
+      && boardGrid[randomRowIndex][randomColIndex].nodeType !== "checkpoint") {
+      // boardGrid[randomRowIndex][randomColIndex].updateNodeType("weighted")
+      boardGrid[randomRowIndex][randomColIndex].updateNodeTypeInstant("weighted")
+    }
+    // boardGrid[randomRowIndex][randomColIndex].updateNodeType("unvisited-animate")
+
+    blockCount++;
+  }
+}
+
+window.setVariableInterval = function (callbackFunc, timing) {
+  var variableInterval = {
+    interval: timing,
+    callback: callbackFunc,
+    stopped: false,
+    runLoop: function () {
+      if (variableInterval.stopped) return;
+      var result = variableInterval.callback.call(variableInterval);
+      if (typeof result == 'number') {
+        if (result === 0) return;
+        variableInterval.interval = result;
+      }
+      variableInterval.loop();
+    },
+    stop: function () {
+      this.stopped = true;
+      window.clearTimeout(this.timeout);
+    },
+    start: function () {
+      this.stopped = false;
+      return this.loop();
+    },
+    loop: function () {
+      this.timeout = window.setTimeout(this.runLoop, this.interval);
+      return this;
+    }
+  };
+
+  return variableInterval.start();
+};
+
+export function randomizedDfs(boardGrid, terminationCallback) {
+  console.log("Randomized DFS algo called...")
+  makeAllBlock(boardGrid)
+
+  // console.log(boardGrid)
+  let neighbors = updateNeighbors(boardGrid)
+
+  // let mazeStartRow = Math.floor(((Math.random() * boardGrid.length * 2) - 1) / 2);
+  // let mazeStartCol = Math.floor(((Math.random() * boardGrid[0].length * 2) - 1) / 2);
+  // console.log(mazeStartRow, mazeStartCol)
+  let mazeStartRow = 10
+  let mazeStartCol = 10
+  // console.log(neighbors)
+  console.log(neighbors[`10-10`])
+  // console.log(neighbors[`${mazeStartRow}-${mazeStartCol}`])
 
   let mazeStart = boardGrid[mazeStartRow][mazeStartCol];
+
+  console.log(mazeStart)
+
+  let stack = [];
+  stack.push(mazeStart);
+  console.log(stack)
+
+  let visitedNodeSet = new Set()
+  visitedNodeSet.add(mazeStart);
+
+  // while (stack.length) {
+  // let viz = setInterval(() => {
+  let viz = setVariableInterval(() => {
+    // console.log(viz.interval)
+
+    // while (frontier.size) {
+    if (!stack.length) {
+      clearInterval(viz);
+      console.log("finished")
+      terminationCallback();
+      viz.stop()
+
+      // console.log(pathTree)
+      // drawPath(pathTree)
+      return;
+    }
+
+    // console.log(stack)
+    let currentNode = stack[stack.length - 1]
+    // console.log(currentNode)
+    let neighbor;
+
+    // if (currentNode.neighbors.length == 0) {
+    if (neighbors[currentNode.id].length == 0) {
+      stack.pop()
+      viz.interval = 0;
+      // this.interval = 10;
+      // console.log("poped")
+      // continue;
+    }
+    else {
+      // this.interval = 50
+      let randomNeighborIndex = Math.floor(Math.random() * (neighbors[currentNode.id].length))
+      // neighbor = neighbors[currentNode.id][0];
+      // neighbors[currentNode.id].shift();
+      neighbor = neighbors[currentNode.id][randomNeighborIndex]
+      neighbors[currentNode.id] = [...neighbors[currentNode.id].slice(0, randomNeighborIndex), ...neighbors[currentNode.id].slice(randomNeighborIndex + 1)]
+      if (!visitedNodeSet.has(neighbor)) {
+        viz.interval = 16.6
+        visitedNodeSet.add(neighbor)
+        stack.push(currentNode)
+        currentNode.updateNodeTypeInstant("dfs-head")
+        stack.push(neighbor)
+
+        // console.log(currentNode)
+        // console.log(neighbor)
+        let midNode = connectTwoNodes(neighbor, currentNode, boardGrid);
+        // console.log(midNode)
+        // currentNode.updateNodeTypeInstant("unvisited-animate")
+        currentNode.updateNodeType("unvisited-animate")
+        midNode.updateNodeType("unvisited-animate")
+        neighbor.updateNodeType("unvisited-animate")
+      }
+
+    }
+  }, 16.6)
+
+
+
+
+
+  return;
+
+
+
+
+
+
+
 
   // let neighborObj = updateNeighbors(boardGrid);
   // let neighborObj = neiObj(boardGrid);
   // let neighborNodeIds = Object.keys(neighborObj)
   // console.log(neighborObj)
   // console.log(neighborNodeIds)
-  neiObj(boardGrid)
-  console.log(boardGrid[10][10].mazeNeighbors)
-  console.log(boardGrid[15][10].mazeNeighbors)
-  console.log(mazeStart.mazeNeighbors)
-  console.log(mazeStart)
 
-  let solution = [];
-  let stack = [];
-  stack.push(mazeStart.id);
 
-  return;
 
-  while (stack.length) {
-    let currentNodeId = stack[0];
-    let currentNode = boardGrid[currentNodeId.split("-")[0]][currentNodeId.split("-")[1]]
+  // neiObj(boardGrid)
+  // console.log(boardGrid[10][10].mazeNeighbors)
+  // console.log(boardGrid[15][10].mazeNeighbors)
+  // console.log(mazeStart.mazeNeighbors)
+  // console.log(mazeStart)
 
-    // console.log(neighborObj[currentNodeId])
-    // console.log(typeof currentNodeId)
-    console.log(neighborObj.currentNodeId)
-    let randomMax = neighborObj[currentNodeId].length;
-    if (randomMax !== 0) {
+  // let solution = [];
+  // let stack = [];
+  // stack.push(mazeStart.id);
 
-      let randomNeighborNode = neighborObj[currentNodeId][Math.floor(Math.random() * randomMax)];
+  // return;
 
-      let midNode = connectTwoNodes(currentNode, randomNeighborNode, boardGrid)
+  // while (stack.length) {
+  //   let currentNodeId = stack[0];
+  //   let currentNode = boardGrid[currentNodeId.split("-")[0]][currentNodeId.split("-")[1]]
 
-      currentNode.linkedElement.classList.add("brown")
-      midNode.linkedElement.classList.add("brown")
-      randomNeighborNode.linkedElement.classList.add("brown")
+  //   // console.log(neighborObj[currentNodeId])
+  //   // console.log(typeof currentNodeId)
+  //   console.log(neighborObj.currentNodeId)
+  //   let randomMax = neighborObj[currentNodeId].length;
+  //   if (randomMax !== 0) {
 
-      stack.push(randomNeighborNode)
-    } else {
-      stack.shift();
+  //     let randomNeighborNode = neighborObj[currentNodeId][Math.floor(Math.random() * randomMax)];
 
-    }
+  //     let midNode = connectTwoNodes(currentNode, randomNeighborNode, boardGrid)
 
-  }
+  //     currentNode.linkedElement.classList.add("brown")
+  //     midNode.linkedElement.classList.add("brown")
+  //     randomNeighborNode.linkedElement.classList.add("brown")
+
+  //     stack.push(randomNeighborNode)
+  //   } else {
+  //     stack.shift();
+
+  //   }
+
+  // }
 
 
 

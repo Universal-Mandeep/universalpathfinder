@@ -18,16 +18,15 @@
                 Path Algorithms
               </span>
 
-              <!-- <div class="dropdown-label">PATH ALGORITHMS</div> -->
               <div class="carrot">></div>
             </div>
 
             <ul class="dropdown-list">
-              <li class="dropdown-list-item">Dijkstra</li>
-              <li class="dropdown-list-item">A Star</li>
-              <li class="dropdown-list-item">Best First Search</li>
-              <li class="dropdown-list-item">BFS</li>
-              <li class="dropdown-list-item">DFS</li>
+              <li class="dropdown-list-item" id="dijkstra">Dijkstra's</li>
+              <li class="dropdown-list-item" id="astar">A Star</li>
+              <li class="dropdown-list-item" id="bestFirstSearch">Best First Search</li>
+              <li class="dropdown-list-item" id="bfs">Breadth First Search</li>
+              <li class="dropdown-list-item" id="dfs">Depth First Search</li>
             </ul>
           </div>
           <div class="dropdown maze-algo" data-dropdown-active="false">
@@ -40,28 +39,22 @@
             <ul class="dropdown-list">
               <li class="dropdown-list-item" id="randomizedKruskals">Randomized Kruskals</li>
               <li class="dropdown-list-item" id="randomizedPrims">Randomized Prims</li>
-              <!-- <li class="dropdown-list-item" id="randomizedBfs">Randomized BFS</li> -->
               <li class="dropdown-list-item" id="randomizedDfs">Randomized DFS</li>
               <li class="dropdown-list-item" id="randomizedBlocks">Random Blocks</li>
               <li class="dropdown-list-item" id="randomizedWeights">Random Weights</li>
             </ul>
           </div>
         </div>
-        <div class="visualize-btn ">Visualize</div>
+        <div class="visualize-btn">Visualize</div>
         <div class="right">
           <div class="options">
             <div class="checkpoint-diagonal">
               <div class="checkpoint-btn toggle-btn" data-active="false">checkpoint</div>
-              <!-- <div class="divider"></div> -->
               <div class="diagonal-btn toggle-btn" data-active="false">diagonal</div>
             </div>
             <div class="divider"></div>
 
-
-
-            <!-- <div class="dropdown  speed-btn" data-dropdown-active="false"> -->
             <div class="speed-btn" data-dropdown-active="false">
-              <!-- <div class="dropdown-label">Speed: Fast</div> -->
               <div class="dropdown-label" title="SPEED">
                 <svg class="speed-svg" fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
                   width="800px" height="800px" viewBox="0 0 593.912 593.912"
@@ -102,27 +95,18 @@
                     </g>
                   </g>
                 </svg>
-                <!-- <div class="speed-label">Fast</div> -->
-                <!-- <div class="speed-label"></div> -->
               </div> 
               <div class="speed-values">
                 <div class="speed-value">10</div>
                 <div class="speed-value">40</div>
                 <div class="speed-value selected">60</div>
               </div>
-              <!-- <ul class="dropdown-list">
-                <li class="dropdown-list-item">Fast</li>
-                <li class="dropdown-list-item">Medium</li>
-                <li class="dropdown-list-item">Slow</li>
-              </ul> -->
             </div>
           </div>
 
 
           <div class="other">
-
             <div class="dropdown clear-board-btn" data-dropdown-active="false">
-              <!-- <div class="dropdown-label">Clear</div> -->
               <div class="dropdown-label">
                 <svg class="clear-svg" fill="#000000" width="800px" height="800px" viewBox="0 0 1024 1024" t="1569683368540" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9723" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"></style></defs><path d="M899.1 869.6l-53-305.6H864c14.4 0 26-11.6 26-26V346c0-14.4-11.6-26-26-26H618V138c0-14.4-11.6-26-26-26H432c-14.4 0-26 11.6-26 26v182H160c-14.4 0-26 11.6-26 26v192c0 14.4 11.6 26 26 26h17.9l-53 305.6c-0.3 1.5-0.4 3-0.4 4.4 0 14.4 11.6 26 26 26h723c1.5 0 3-0.1 4.4-0.4 14.2-2.4 23.7-15.9 21.2-30zM204 390h272V182h72v208h272v104H204V390z m468 440V674c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v156H416V674c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v156H202.8l45.1-260H776l45.1 260H672z" p-id="9724"></path></svg>
               </div>
@@ -133,11 +117,25 @@
                 <li class="dropdown-list-item">Reset Board</li>
               </ul>
             </div>
-            <!-- <div class="info-btn">i</div> -->
             <div class="info-btn">
               <svg class="info-svg" fill="#000000" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 Z M12,21 C16.9705627,21 21,16.9705627 21,12 C21,7.02943725 16.9705627,3 12,3 C7.02943725,3 3,7.02943725 3,12 C3,16.9705627 7.02943725,21 12,21 Z M13.0036109,13.9983464 L14.0029544,13.9983464 L14.0029544,15.9983464 L10.0029544,15.9983464 L10.0029544,13.9983464 L11.0029544,13.9983464 L11.0029544,11.9983464 L10.0029544,11.9983464 L10.0029544,9.99834639 L13.0036109,9.99834639 L13.0036109,13.9983464 Z M12.0003283,8.99834639 C11.4478622,8.99834639 11,8.55063114 11,7.99834639 C11,7.44606164 11.4478622,6.99834639 12.0003283,6.99834639 C12.5527943,6.99834639 13.0006565,7.44606164 13.0006565,7.99834639 C13.0006565,8.55063114 12.5527943,8.99834639 12.0003283,8.99834639 Z"/>
               </svg>
+
+              <div class="info-card card" data-open="false">
+                <div class="header">
+                  <div data-selected="true" class="info-tab-label" data-key="details">Info</div>
+                  <div data-selected="false" class="info-tab-label" data-key="pathAlgo">Path Algo</div>
+                  <div data-selected="false" class="info-tab-label" data-key="mazeAlgo">Maze Algo</div>
+                  <div data-selected="false" class="info-tab-label" data-key="features">Features</div>
+                </div>
+                <div class="body">
+                  <!--! INFO-CARD body content in main.js -->
+                  <div class="side-nav"></div>
+                  <div class="description-container"></div>
+                </div>
+                <!-- <div class="node-details"></div> -->
+              </div>
             </div>
           </div>
         </div>
@@ -148,18 +146,7 @@
     </nav>
 
     <section class="aside-boardgrid">
-      <!-- <aside class="side-nav">
-        <div class="top">
-          <div class="checkpoint-btn btn" data-active="false"></div>
-          <div class="diagonal-btn btn" data-active="false">D</div>
-          <div class="weight-btn btn" title="ctrl + left click">W</div>
-        </div>
-        <div class="bottom">
-          <div class="speeed-btn btn second-last"></div>
-          <div class="info-btn btn"></div>
-        </div>
-      </aside> -->
-      <section id="board-grid"></section>
+      <section id="board-grid" class=""></section>
     </section>
 
 
@@ -188,6 +175,17 @@
         </div>
       </div>
       </div>
+    </div>
+
+    <div class="skip-btn" title="Skip Animation" data-active="false">SKIP</div>
+    <div class="toast-container">
+
+      <!-- <div class="toast" data-active="false">
+        <span class="sign">!</span>
+        <span class="msg"></span>
+        
+      </div> -->
+      <!-- No path Exist -->
     </div>
 
     <script type="module" src="public/browser/main.js"></script>

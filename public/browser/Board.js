@@ -1,11 +1,7 @@
 import Node from "./node.js"
-import bfs from "./pathAlgo/unweightedAlgo.js";
+import bfs, { dfs } from "./pathAlgo/unweightedAlgo.js";
 import { aStar, dijkstra, bestFirstSearch } from "./pathAlgo/weightedAlgo.js";
 
-
-
-// console.log("From Board.js")
-//TODO fix grid size... in createVisualGrid memeber function
 
 export default class Board {
   constructor(rows, cols) {
@@ -19,28 +15,6 @@ export default class Board {
     this.selectedPathAlgo = null;       // String
     this.selectedMazeAlgo = null;
 
-    this.visitedNodesInOrder = [];      // Node Objects
-
-    //* It will be a 2D list 
-    //  [ [start, end, [visitedNode for start to end]] ]
-    //  [ [start, cP1, [visitedNode for start to cP1]] ]
-
-    // for branch out as one startPoint can connect to multiple end nodes
-    //  startAtId: [[endAtId, [visitedNode for that start to this end]], ... to other end id]
-    //* "2-10" cP2
-    //*     |
-    //* "10-10" start ---- "10-15" cP1 ------- "10-30" end
-    //  = {
-    //    "10-10": [ ["10-15", [node Objects]], ["2-10", [node Objects]] ]
-    //    "10-15": [ ["10-30", [node Objects]] ]
-    // }
-    //TODO Create functions to get and store the visited node for reuseability 
-    //TODO Create function to call visualized function for each checkpoint accordingly
-
-
-    this.cameFrom = {};
-
-    this.checkpointList = [];               //* Store All Checkpoint Node Object
     this.boardProperties = {
       isWeighted: false,
       hasDiagonalPathMovement: false,
@@ -52,9 +26,12 @@ export default class Board {
 
     this.weightedNodeCount = 0;
 
-
-    // this.mouseDown = false;
     this.speed = "fast";
+    this._speedChanged = false;
+    this._skipAnimation = false;
+    this._warningId = 0;
+    this.warningQueue = [];
+
     this.nodeDrag = {
       startNode: false,
       endNode: false,
@@ -74,9 +51,6 @@ export default class Board {
 
   }
 
-  // get startNode(){
-  //   return this.startNode
-  // }
   setStartNode(newStart) {
     // takes node object
     if (this.startNode != null) {
@@ -109,124 +83,72 @@ export default class Board {
     if (this.boardProperties.hasCheckpoint) this.setCheckpointNode(this.cpoint)
   }
 
-
-  // setBlockNode(newBlock){
-  //   if(thi)
-  // }  
-
-
   init() {
-    // const windowWidth = window.innerWidth - 42.4;
-
     const nodeSize = 22;
-
     const windowWidth = window.innerWidth;
     const gridHeight = window.innerHeight - 48;
-
-    console.log(window.innerWidth)
-    console.log(window.gridHeight)
 
     let possibleColumns = Math.floor(windowWidth / nodeSize)
     // let possibleRows = Math.floor(gridHeight / 26)
     let possibleRows = Math.floor(gridHeight / nodeSize)
 
-
     this.rows = possibleRows
     this.cols = possibleColumns
-
-
-
 
     this.createNodeGrid();
     this.createVisualGrid();
 
     // Default start and end position
-    // this.setStartNode(this.boardGrid[10][10]);
-    console.log(Math.floor(possibleRows / 2), Math.floor(possibleColumns / 5))
     this.setStartNode(this.boardGrid[Math.floor(possibleRows / 2)][Math.floor(possibleColumns / 5)]);
     this.setEndNode(this.boardGrid[Math.floor(possibleRows / 2)][Math.floor(possibleColumns - (possibleColumns / 5))]);
 
+    setInterval(() => {
+      console.log(this.warningQueue)
+      // }, 500)
+    }, 1000)
   }
 
   createNodeGrid() {
-    // console.log(`rows:${this.rows} cols:${this.cols}`)
     for (let row = 0; row < this.rows; row++) {
-      // for (let row = 0; row < possibleRows; row++) {
       let rowList = [];
       for (let col = 0; col < this.cols; col++) {
-        // for (let col = 0; col < possibleColumns; col++) {
         const newNode = new Node(row, col);
         rowList.push(newNode);
       }
       this.boardGrid.push(rowList)
     }
-
   }
 
   createVisualGrid() {
     const boardGridContainer = document.getElementById("board-grid");
     const windowWidth = window.innerWidth;
-    // const gridHeight = window.innerHeight - 48;
 
-    // // console.log(windowWidth)
-    // // console.log(gridHeight)
-
-    // console.log(window.innerWidth)
-    // console.log(window.gridHeight)
-
-
-    // let possibleColumns = Math.floor(windowWidth / 26)
-    // let possibleRows = Math.floor(gridHeight / 26)
     let possibleColumnsWidth = 26
-
-
-    // console.log(possibleColumns)
-    // console.log(possibleRows)
-
 
     let divWidth = `${windowWidth / this.cols}px`;
     for (let row = 0; row < this.rows; row++) {
-      // for (let row = 0; row < possibleRows; row++) {
       const newRow = document.createElement("div");
       newRow.id = `row-${row}`;
       newRow.classList.add("grid-row")
 
       for (let col = 0; col < this.cols; col++) {
-        // for (let col = 0; col < possibleColumns; col++) {
         const newDiv = document.createElement('div');
         newDiv.id = this.boardGrid[row][col].id;
         newDiv.classList.add("node");
         newDiv.classList.add("unvisited");
 
-
-        //TODO fix grid size...
         divWidth = `23px`;
-        // newDiv.style.height = `${windowWidth / this.rows}px`;
-        // newDiv.setAttribute("style", `width:${windowWidth / this.cols}px; height:${windowWidth / this.rows}px`);
-
-        // newDiv.style.width = divWidth;
-        // newDiv.style.height = divWidth;
-        // newDiv.style.marginTop = "2px";
-        // newDiv.style.marginLeft = "2px";
-
-
-        //! Testing... adding testTest data set to nodes
         newDiv.dataset.animationType = "instant";
-
-
-
         newRow.appendChild(newDiv);
       }
       boardGridContainer.appendChild(newRow);
     }
-
   }
-
 
   resetBoardGrid() {
     for (let nodeRow of this.boardGrid) {
       for (let node of nodeRow) {
-        if (node !== this.startNode && node !== this.endNode) {
+        if (node !== this.startNode && node !== this.endNode && node !== this.cpoint) {
           node.updateNodeTypeInstant("unvisited");
           node.makeUnweighted()
         }
@@ -234,7 +156,6 @@ export default class Board {
     }
     this.boardState = "idle";
     this.boardStatus = "pure";
-    // this.boardProperties.instantPath = false;
   }
 
   resetBoardGridForMaze() {
@@ -263,27 +184,19 @@ export default class Board {
   }
 
   clearWeights() {
-    console.log("in board")
-    console.log(this.boardGrid[0][0])
     for (let nodeRow of this.boardGrid) {
       for (let node of nodeRow) {
-        console.log(node.isWeighted)
-        // if (node !== this.startNode && node !== this.cpoint && node !== this.endNode && node.nodeType !== "block") {
         if (node.isWeighted) {
           node.makeUnweighted()
-          // node.updateNodeTypeInstant("unvisited");
         }
       }
     }
   }
 
 
-
   clearVisitedNodesAndUpdateBoardStatus() {
     for (let nodeRow of this.boardGrid) {
       for (let node of nodeRow) {
-        // if (node !== this.startNode && node !== this.endNode && !node.linkedElement.matches(".block") && !node.linkedElement.matches(".weighted")) {
-        // if (node !== this.startNode && node !== this.cpoint && node !== this.endNode && !node.linkedElement.matches(".block")) {
         if (node.nodeType == "visited" || node.nodeType == "visited-2" || node.nodeType == "path") {
           node.updateNodeTypeInstant("unvisited");
         }
@@ -293,10 +206,10 @@ export default class Board {
     this.boardStatus = "dirty";
     this.boardProperties.instantPath = false;
   }
+
   clearVisitedNodes() {
     for (let nodeRow of this.boardGrid) {
       for (let node of nodeRow) {
-        // if (node !== this.startNode && node !== this.endNode && !node.linkedElement.matches(".block") && !node.linkedElement.matches(".weighted")) {
         if (node !== this.startNode && node !== this.cpoint && node !== this.endNode && !node.linkedElement.matches(".block")) {
           node.updateNodeTypeInstant("unvisited");
         }
@@ -309,8 +222,6 @@ export default class Board {
 
 
   updateNeighborsForPathAlgo() {
-    // console.log("updating neightbors... from board")
-
     for (let nodeRow of this.boardGrid) {
       for (let node of nodeRow) {
         if (node.nodeType !== "block") {
@@ -364,17 +275,9 @@ export default class Board {
         }
       }
     }
-
-    // console.log(this.startNode.neighbors)
-    // console.log(this.startNode.id)
-    // console.log(this.boardGrid[0][0])
-    // console.log(this.boardGrid[0][1])
-    // console.log(this.boardGrid[0][2])
   }
 
   updateNeighborsForMazeAlgo() {
-    // console.log("updating neightbors... from board")
-
     for (let nodeRow of this.boardGrid) {
       for (let node of nodeRow) {
         if (node.nodeType !== "block") {
@@ -402,38 +305,10 @@ export default class Board {
             newNeighbors.push(this.boardGrid[nodeRow][nodeCol - 2])
           }
 
-          // if (this.boardProperties.hasDiagonalPathMovement) {
-          //   // top right
-          //   if (nodeRow > 0 && nodeCol < this.cols - 1 && this.boardGrid[nodeRow - 1][nodeCol + 1].nodeType !== "block") {
-          //     newNeighbors.push(this.boardGrid[nodeRow - 1][nodeCol + 1])
-          //   }
-
-          //   // bottom right
-          //   if (nodeRow < this.rows - 1 && nodeCol < this.cols - 1 && this.boardGrid[nodeRow + 1][nodeCol + 1].nodeType !== "block") {
-          //     newNeighbors.push(this.boardGrid[nodeRow + 1][nodeCol + 1])
-          //   }
-
-          //   // bottom left
-          //   if (nodeRow < this.rows - 1 && nodeCol > 0 && this.boardGrid[nodeRow + 1][nodeCol - 1].nodeType !== "block") {
-          //     newNeighbors.push(this.boardGrid[nodeRow + 1][nodeCol - 1])
-          //   }
-
-          //   // top left
-          //   if (nodeRow > 0 && nodeCol > 0 && this.boardGrid[nodeRow - 1][nodeCol - 1].nodeType !== "block") {
-          //     newNeighbors.push(this.boardGrid[nodeRow - 1][nodeCol - 1])
-          //   }
-          // }
-
           node.neighbors = newNeighbors;
         }
       }
     }
-
-    // console.log(this.startNode.neighbors)
-    // console.log(this.startNode.id)
-    // console.log(this.boardGrid[0][0])
-    // console.log(this.boardGrid[0][1])
-    // console.log(this.boardGrid[0][2])
   }
 
 
@@ -463,33 +338,50 @@ export default class Board {
   addDiagonalMovement() {
   }
 
+  handleWarning() {
+    if (this.selectedPathAlgo == null) {
+      this.toastMsg("Select a path algorithm...")
+      return false;
+    }
+    else if (this.boardState == "generatingMaze") {
+      this.toastMsg("Wait for Maze Generation to finish !")
+      return false;
+    }
+    else if (this.boardState != "idle") {
+      // console.log(this.boardState)
+      this.toastMsg("Wait for previous animation to finish or skip")
+      return false;
+    }
+    return true;
+  }
+
 
   visualizePathAlgo(visualizeType = "annimate") {
-    // console.log("visualize with checkpoint")
+    // if (this.boardState != "idle") {
+    // console.log(this.boardState)
+    if (!this.handleWarning()) return;
+
+
     this.boardState = "exploringGraph";
     this.setStartNode(this.startNode)
     this.setCheckpointNode(this.cpoint)
     this.setEndNode(this.endNode)
 
-    document.querySelector(':root').style.setProperty('--board-background', '#ffffff')
     this.clearVisitedNodes();
     this.updateNeighborsForPathAlgo();
 
-    // let [visitedNodesSCE, pathFromEndToStart] = this.getVisitedNodesAndPath()
-
-    //* E -> End 
-    //* C -> Checkpoint 
     //* S -> Start
+    //* C -> Checkpoint 
+    //* E -> End 
 
-    // console.log(this.boardStatus)
-    // if (!this.boardProperties.instantPath) {
     if (visualizeType === "annimate") {
+      let skipBtn = document.querySelector(".skip-btn")
+      skipBtn.dataset.active = "true"
       let [visitedNodesSCE, pathFromEndToStart] = this.getVisitedNodesAndPath()
       this.drawVisitedNodesWithAnnimation(visitedNodesSCE, pathFromEndToStart);
       this.boardProperties.instantPath = true;
 
     }
-    // else if (visualizeType === "instant" && this.boardStatus !== "pure") {
     else if (visualizeType === "instant" && this.boardProperties.instantPath === true) {
       let [visitedNodesSCE, pathFromEndToStart] = this.getVisitedNodesAndPath()
       this.drawInstatPathAlgo(visitedNodesSCE, pathFromEndToStart)
@@ -498,22 +390,24 @@ export default class Board {
 
 
   callSelectedPathAlgo(startNode, endNode) {
-    // console.log(this.selectedPathAlgo)
     let visitedNodesAndCameFrom = {}
 
-    if (this.selectedPathAlgo === "Dijkstra") {
+    if (this.selectedPathAlgo === "dijkstra") {
       visitedNodesAndCameFrom = dijkstra(startNode, endNode, this.boardGrid);
     }
-    if (this.selectedPathAlgo === "A Star") {
+    if (this.selectedPathAlgo === "astar") {
       visitedNodesAndCameFrom = aStar(startNode, endNode, this.boardGrid);
     }
-    if (this.selectedPathAlgo === "Best First Search") {
+    if (this.selectedPathAlgo === "bestFirstSearch") {
       visitedNodesAndCameFrom = bestFirstSearch(startNode, endNode, this.boardGrid);
     }
-    if (this.selectedPathAlgo === "BFS") {
+    if (this.selectedPathAlgo === "bfs") {
       visitedNodesAndCameFrom = bfs(startNode, endNode, this.boardGrid);
     }
 
+    if (this.selectedPathAlgo === "dfs") {
+      visitedNodesAndCameFrom = dfs(startNode, endNode, this.boardGrid);
+    }
 
     return visitedNodesAndCameFrom;
   }
@@ -524,53 +418,149 @@ export default class Board {
     let visitedType = visitedNodesSCE[iterator][0]
     let visitedNodesInOrder = visitedNodesSCE[iterator][1]
 
-
     const algoSpeed = this.handlePathAlgoSpeed()
-    // let pos = 0;
-    let viz = setInterval(() => {
+    let viz = setVariableInterval(() => {
       this.setStartNode(this.startNode);
       this.setCheckpointNode(this.cpoint);
       this.setEndNode(this.endNode);
 
-      // if (visitedNodesInOrder.length === pos + 1 && visitedNodesSCE.length === iterator + 1) {
+      if (this._speedChanged) {
+        const algoSpeed = this.handlePathAlgoSpeed()
+        viz.interval = algoSpeed;
+        this._speedChanged = false
+      }
+
+      if (this._skipAnimation) {
+        viz.stop()
+        // this._skipAnimation = false
+        let [_visitedNodesSCE, _pathFromEndToStart] = this.getVisitedNodesAndPath()
+        this.drawInstatPathAlgo(_visitedNodesSCE, _pathFromEndToStart)
+
+        // this.boardState = "idle";
+        this.releaseBoard()
+        return
+      }
+
       if (!visitedNodesInOrder.length && visitedNodesSCE.length === iterator + 1) {
         clearInterval(viz);
+        viz.stop()
         this.drawPathWithAnnimation(pathFromEndToStart);
+        // this.boardState = "idle";
         return;
       }
 
       if (visitedNodesInOrder.length === 0) {
-        // if (visitedNodesInOrder.length === pos + 1) {
         iterator++;
         visitedType = visitedNodesSCE[iterator][0]
         visitedNodesInOrder = visitedNodesSCE[iterator][1]
-        // pos = 0;
       }
 
       let currentNode = visitedNodesInOrder[0];
-      // let currentNode = visitedNodesInOrder[pos];
       if (currentNode.nodeType !== "start" || currentNode.nodeType !== "checkpoint" || currentNode.nodeType !== "end") {
         currentNode.updateNodeType(visitedType);
       }
       visitedNodesInOrder.shift();
-      // pos++;
     }, algoSpeed);
+  }
+
+  toastMsg(msg) {
+    // let toast = document.querySelector(".toast")
+    // toast.querySelector(".msg") = msg
+    // toast.dataset.active = "true"
+
+
+    // let prevToast = document.querySelector(`.toast-${this._warningId}`)
+    // prevToast.remove();
+
+    this._warningId++;
+    const newToast = document.createElement("div");
+    // newToast.classList.add(`.toast-${this._warningId}`)
+    newToast.classList.add(`toast-${this._warningId}`)
+    newToast.classList.add("toast")
+    // newToast.id = `.toast-${this._warningId}`
+    newToast.dataset.active = "true"
+
+
+    // const signSpan = document.createElement("span");
+
+    const msgSpan = document.createElement("span");
+
+    msgSpan.innerText = `! ${msg}`
+    msgSpan.classList.add("msg");
+    newToast.appendChild(msgSpan)
+
+    let toastContainer = document.querySelector(".toast-container")
+    toastContainer.appendChild(newToast)
+    console.log(newToast)
+
+    this.warningQueue.push(this._warningId);
+
+    // let toast = document.querySelector(`.toast-${this._warningId}`)
+    // toast.querySelector(".msg").innerText = msg
+
+    // toast.dataset.active = "true";
+    setTimeout(() => {
+      // document.querySelector(".toast").dataset.active = "false";
+      // toast.dataset.active = "false";
+      let t = this.warningQueue[0]
+      let wId = `.toast-${t}`
+      let tc = document.querySelector(wId)
+      tc.remove()
+      // let tc = document.querySelector(wId)
+      console.log(t, tc)
+      this.warningQueue.shift()
+      // prevToast.dataset.active = "false";
+    }, 3000);
   }
 
   drawPathWithAnnimation(pathFromEndToStart) {
     this.boardState = "generatingPath";
 
+    console.log(pathFromEndToStart.length)
+    if (!pathFromEndToStart.length) {
+      this.toastMsg("No Path Exist")
+      // let skipBtn = document.querySelector(".skip-btn")
+      // skipBtn.dataset.active = "false"
+      // this.boardState = "idle"
+      // this.removeDisable()
+      this.releaseBoard()
+
+      return
+    }
+
     let pathFromEndToStartInOrder = [...pathFromEndToStart]
     // const algoSpeed = this.handlePathAlgoSpeed()
 
-    let viz = setInterval(() => {
+    let viz = setVariableInterval(() => {
       this.setStartNode(this.startNode);
       this.setCheckpointNode(this.cpoint);
       this.setEndNode(this.endNode);
 
+
+      if (this._skipAnimation) {
+        viz.stop()
+        // On skip... draw remaining path instantanously
+        let [_visitedNodesSCE, _pathFromEndToStart] = this.getVisitedNodesAndPath()
+        this.drawInstantPath(pathFromEndToStart);
+        // this._skipAnimation = false
+        // this.boardState = "idle";
+        // this.removeDisable()
+
+        this.releaseBoard()
+        return
+      }
+
+
       if (!pathFromEndToStartInOrder.length) {
-        this.boardState = "idle";
         clearInterval(viz);
+        viz.stop()
+        // this._skipAnimation = false;
+        // this.boardState = "idle";
+        // let skipBtn = document.querySelector(".skip-btn")
+        // skipBtn.dataset.active = "false"
+        // this.removeDisable()
+
+        this.releaseBoard()
         return;
       }
 
@@ -614,6 +604,7 @@ export default class Board {
 
     if (!this.boardProperties.hasCheckpoint) {
       visitedNodesAndCameFrom = this.callSelectedPathAlgo(this.startNode, this.endNode);
+      // console.log(visitedNodesAndCameFrom)
 
       let visitedNodes = visitedNodesAndCameFrom.visitedNodesInOrder;
       let cameFrom = visitedNodesAndCameFrom.cameFrom;
@@ -629,6 +620,7 @@ export default class Board {
       visitedNodesAndCameFrom = this.callSelectedPathAlgo(this.startNode, this.cpoint);
       visitedNodeSToC = visitedNodesAndCameFrom.visitedNodesInOrder;
       cameFromSToC = visitedNodesAndCameFrom.cameFrom
+      this.updateNeighborsForPathAlgo()
 
       visitedNodesAndCameFrom = this.callSelectedPathAlgo(this.cpoint, this.endNode);
 
@@ -721,7 +713,29 @@ export default class Board {
       }
     }
 
+    this.drawInstantPath(pathFromEndToStart);
 
+    // this.boardState = "idle";
+
+    this.releaseBoard()
+
+    // this.boardState = "generatingPath";
+    // let pathFromEndToStartInOrder = [...pathFromEndToStart]
+
+    // while (pathFromEndToStartInOrder.length) {
+    //   this.setStartNode(this.startNode);
+    //   this.setCheckpointNode(this.cpoint);
+    //   this.setEndNode(this.endNode);
+
+    //   let currentNode = pathFromEndToStartInOrder[0];
+    //   if (currentNode.nodeType !== "start" || currentNode.nodeType !== "checkpoint" || currentNode.nodeType !== "end") {
+    //     currentNode.updateNodeTypeInstant("path");
+    //   }
+    //   pathFromEndToStartInOrder.shift();
+    // }
+  }
+
+  drawInstantPath(pathFromEndToStart) {
     this.boardState = "generatingPath";
     let pathFromEndToStartInOrder = [...pathFromEndToStart]
 
@@ -737,7 +751,6 @@ export default class Board {
       pathFromEndToStartInOrder.shift();
     }
   }
-
 
 
 
@@ -785,6 +798,7 @@ export default class Board {
   // }
 
   setPathAlgoSpeed(newSpeed) {
+    this._speedChanged = true
     if (newSpeed === 60) {
       this.speed = "fast";
       return;
@@ -811,4 +825,21 @@ export default class Board {
 
     return 100;
   }
+
+  removeDisable() {
+    let disabledElements = document.querySelectorAll(".disabled");
+    console.log(disabledElements)
+    disabledElements.forEach((element) => {
+      element.classList.remove("disabled")
+    })
+  }
+
+  releaseBoard() {
+    this.boardState = "idle";
+    this._skipAnimation = false;
+    let skipBtn = document.querySelector(".skip-btn")
+    skipBtn.dataset.active = "false"
+    this.removeDisable()
+  }
+
 }
