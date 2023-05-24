@@ -41,14 +41,9 @@ export default class Board {
 
     this.boardState = "idle"
     this.boardStatus = "pure";
-    // tell's the board status... pure, dirty, modified
 
     this.boardStateLog = [];
-    // board state log hold the last 5 board states and 0 is the current state of the board
     this.boardStatusLog = [];
-    // it hold the last 5 board status and 0 is the current status
-
-
   }
 
   setStartNode(newStart) {
@@ -102,10 +97,6 @@ export default class Board {
     this.setStartNode(this.boardGrid[Math.floor(possibleRows / 2)][Math.floor(possibleColumns / 5)]);
     this.setEndNode(this.boardGrid[Math.floor(possibleRows / 2)][Math.floor(possibleColumns - (possibleColumns / 5))]);
 
-    setInterval(() => {
-      console.log(this.warningQueue)
-      // }, 500)
-    }, 1000)
   }
 
   createNodeGrid() {
@@ -122,8 +113,6 @@ export default class Board {
   createVisualGrid() {
     const boardGridContainer = document.getElementById("board-grid");
     const windowWidth = window.innerWidth;
-
-    let possibleColumnsWidth = 26
 
     let divWidth = `${windowWidth / this.cols}px`;
     for (let row = 0; row < this.rows; row++) {
@@ -167,15 +156,11 @@ export default class Board {
         }
       }
     }
-    // this.boardState = "idle";
-    // this.boardStatus = "pure";
-    // this.boardProperties.instantPath = false;
   }
 
   clearBlocks() {
     for (let nodeRow of this.boardGrid) {
       for (let node of nodeRow) {
-        // if (node !== this.startNode && node !== this.cpoint && node !== this.endNode && node.nodeType !== "block") {
         if (node.nodeType === "block") {
           node.updateNodeTypeInstant("unvisited");
         }
@@ -211,13 +196,12 @@ export default class Board {
     for (let nodeRow of this.boardGrid) {
       for (let node of nodeRow) {
         if (node !== this.startNode && node !== this.cpoint && node !== this.endNode && !node.linkedElement.matches(".block")) {
-          node.updateNodeTypeInstant("unvisited");
+          // node.updateNodeTypeInstant("unvisited");
+          node.updateNodeType("unvisited");
+
         }
       }
     }
-    // this.boardState = "idle";
-    // this.boardStatus = "dirty";
-    // this.boardProperties.instantPath = false;
   }
 
 
@@ -313,14 +297,11 @@ export default class Board {
 
 
   addCheckpoint() {
-    console.log("Checkpoint added")
     this.setCheckpointNode(this.boardGrid[Math.floor(this.rows / 2)][Math.floor(this.cols / 2)])
     this.boardProperties.hasCheckpoint = true;
   }
 
   toggleCheckpoint() {
-    console.log("Checkpoint Toggled")
-
     if (this.boardProperties.hasCheckpoint === true) {
       // remove checkpoint
       this.cpoint.updateNodeType("unvisited");
@@ -348,7 +329,6 @@ export default class Board {
       return false;
     }
     else if (this.boardState != "idle") {
-      // console.log(this.boardState)
       this.toastMsg("Wait for previous animation to finish or skip")
       return false;
     }
@@ -357,8 +337,6 @@ export default class Board {
 
 
   visualizePathAlgo(visualizeType = "annimate") {
-    // if (this.boardState != "idle") {
-    // console.log(this.boardState)
     if (!this.handleWarning()) return;
 
 
@@ -386,6 +364,8 @@ export default class Board {
       let [visitedNodesSCE, pathFromEndToStart] = this.getVisitedNodesAndPath()
       this.drawInstatPathAlgo(visitedNodesSCE, pathFromEndToStart)
     }
+
+    else this.releaseBoard()
   }
 
 
@@ -432,11 +412,9 @@ export default class Board {
 
       if (this._skipAnimation) {
         viz.stop()
-        // this._skipAnimation = false
         let [_visitedNodesSCE, _pathFromEndToStart] = this.getVisitedNodesAndPath()
         this.drawInstatPathAlgo(_visitedNodesSCE, _pathFromEndToStart)
 
-        // this.boardState = "idle";
         this.releaseBoard()
         return
       }
@@ -445,7 +423,6 @@ export default class Board {
         clearInterval(viz);
         viz.stop()
         this.drawPathWithAnnimation(pathFromEndToStart);
-        // this.boardState = "idle";
         return;
       }
 
@@ -464,24 +441,12 @@ export default class Board {
   }
 
   toastMsg(msg) {
-    // let toast = document.querySelector(".toast")
-    // toast.querySelector(".msg") = msg
-    // toast.dataset.active = "true"
-
-
-    // let prevToast = document.querySelector(`.toast-${this._warningId}`)
-    // prevToast.remove();
-
     this._warningId++;
     const newToast = document.createElement("div");
-    // newToast.classList.add(`.toast-${this._warningId}`)
+
     newToast.classList.add(`toast-${this._warningId}`)
     newToast.classList.add("toast")
-    // newToast.id = `.toast-${this._warningId}`
     newToast.dataset.active = "true"
-
-
-    // const signSpan = document.createElement("span");
 
     const msgSpan = document.createElement("span");
 
@@ -491,45 +456,28 @@ export default class Board {
 
     let toastContainer = document.querySelector(".toast-container")
     toastContainer.appendChild(newToast)
-    console.log(newToast)
 
     this.warningQueue.push(this._warningId);
 
-    // let toast = document.querySelector(`.toast-${this._warningId}`)
-    // toast.querySelector(".msg").innerText = msg
-
-    // toast.dataset.active = "true";
     setTimeout(() => {
-      // document.querySelector(".toast").dataset.active = "false";
-      // toast.dataset.active = "false";
       let t = this.warningQueue[0]
       let wId = `.toast-${t}`
       let tc = document.querySelector(wId)
       tc.remove()
-      // let tc = document.querySelector(wId)
-      console.log(t, tc)
       this.warningQueue.shift()
-      // prevToast.dataset.active = "false";
     }, 3000);
   }
 
   drawPathWithAnnimation(pathFromEndToStart) {
     this.boardState = "generatingPath";
 
-    console.log(pathFromEndToStart.length)
     if (!pathFromEndToStart.length) {
       this.toastMsg("No Path Exist")
-      // let skipBtn = document.querySelector(".skip-btn")
-      // skipBtn.dataset.active = "false"
-      // this.boardState = "idle"
-      // this.removeDisable()
       this.releaseBoard()
-
       return
     }
 
     let pathFromEndToStartInOrder = [...pathFromEndToStart]
-    // const algoSpeed = this.handlePathAlgoSpeed()
 
     let viz = setVariableInterval(() => {
       this.setStartNode(this.startNode);
@@ -542,10 +490,6 @@ export default class Board {
         // On skip... draw remaining path instantanously
         let [_visitedNodesSCE, _pathFromEndToStart] = this.getVisitedNodesAndPath()
         this.drawInstantPath(pathFromEndToStart);
-        // this._skipAnimation = false
-        // this.boardState = "idle";
-        // this.removeDisable()
-
         this.releaseBoard()
         return
       }
@@ -554,12 +498,6 @@ export default class Board {
       if (!pathFromEndToStartInOrder.length) {
         clearInterval(viz);
         viz.stop()
-        // this._skipAnimation = false;
-        // this.boardState = "idle";
-        // let skipBtn = document.querySelector(".skip-btn")
-        // skipBtn.dataset.active = "false"
-        // this.removeDisable()
-
         this.releaseBoard()
         return;
       }
@@ -578,6 +516,7 @@ export default class Board {
 
     if (!(currentNode.id in cameFrom)) {
       console.log("No Path Exist !!")
+      // this.toastMsg(`No Path Exist: From ${tempStartNode.id} to ${tempEndNode.id}`)
       return path;
     }
 
@@ -604,7 +543,6 @@ export default class Board {
 
     if (!this.boardProperties.hasCheckpoint) {
       visitedNodesAndCameFrom = this.callSelectedPathAlgo(this.startNode, this.endNode);
-      // console.log(visitedNodesAndCameFrom)
 
       let visitedNodes = visitedNodesAndCameFrom.visitedNodesInOrder;
       let cameFrom = visitedNodesAndCameFrom.cameFrom;
@@ -643,54 +581,6 @@ export default class Board {
 
 
   drawInstatPathAlgo(visitedNodesSCE, pathFromEndToStart) {
-    console.log("Drawing Instant path")
-    // this.boardState = "exploringGraph";
-
-    // this.clearVisitedNodes();
-    // this.updateNeighborsForPathAlgo();
-    // let [visitedNodesSCE, pathFromEndToStart] = this.getVisitedNodesAndPath()
-
-
-
-    // let visitedNodesAndCameFrom = {};
-    // let visitedNodesSCE = [];
-    // let pathFromEndToStart = [];
-
-    // if (!this.boardProperties.hasCheckpoint) {
-    //   visitedNodesAndCameFrom = this.callSelectedPathAlgo(this.startNode, this.endNode);
-
-    //   let visitedNodes = visitedNodesAndCameFrom.visitedNodesInOrder;
-    //   let cameFrom = visitedNodesAndCameFrom.cameFrom;
-
-    //   visitedNodesSCE = [["visited", visitedNodes]];
-
-    //   let pathES = this.getPathNodesInOrder(cameFrom, this.endNode, this.startNode);
-    //   pathFromEndToStart = [...pathES];
-    // }
-    // else {
-    //   let visitedNodeSToC = [], cameFromSToC = {}, visitedNodeCToE = [], cameFromCToE = {};
-
-    //   visitedNodesAndCameFrom = this.callSelectedPathAlgo(this.startNode, this.cpoint);
-    //   visitedNodeSToC = visitedNodesAndCameFrom.visitedNodesInOrder;
-    //   cameFromSToC = visitedNodesAndCameFrom.cameFrom
-
-    //   visitedNodesAndCameFrom = this.callSelectedPathAlgo(this.cpoint, this.endNode);
-
-    //   visitedNodeCToE = visitedNodesAndCameFrom.visitedNodesInOrder
-    //   cameFromCToE = visitedNodesAndCameFrom.cameFrom
-
-    //   visitedNodesSCE = [
-    //     ["visited", [...visitedNodeSToC]],
-    //     ["visited-2", [...visitedNodeCToE]]
-    //   ]
-
-    //   let pathEC = this.getPathNodesInOrder(cameFromCToE, this.endNode, this.cpoint);
-    //   let pathCS = this.getPathNodesInOrder(cameFromSToC, this.cpoint, this.startNode);
-
-    //   pathFromEndToStart = [...pathEC, ...pathCS]
-    // }
-
-
     let iterator = 0;
     let visitedType = visitedNodesSCE[iterator][0]
     let visitedNodesInOrder = visitedNodesSCE[iterator][1]
@@ -714,25 +604,7 @@ export default class Board {
     }
 
     this.drawInstantPath(pathFromEndToStart);
-
-    // this.boardState = "idle";
-
     this.releaseBoard()
-
-    // this.boardState = "generatingPath";
-    // let pathFromEndToStartInOrder = [...pathFromEndToStart]
-
-    // while (pathFromEndToStartInOrder.length) {
-    //   this.setStartNode(this.startNode);
-    //   this.setCheckpointNode(this.cpoint);
-    //   this.setEndNode(this.endNode);
-
-    //   let currentNode = pathFromEndToStartInOrder[0];
-    //   if (currentNode.nodeType !== "start" || currentNode.nodeType !== "checkpoint" || currentNode.nodeType !== "end") {
-    //     currentNode.updateNodeTypeInstant("path");
-    //   }
-    //   pathFromEndToStartInOrder.shift();
-    // }
   }
 
   drawInstantPath(pathFromEndToStart) {
@@ -752,51 +624,6 @@ export default class Board {
     }
   }
 
-
-
-  // drawInstatPathAlgoOLD() {
-  //   this.clearVisitedNodes();
-  //   this.updateNeighborsForPathAlgo();
-
-  //   let visitedNodesAndCameFrom = {}
-  //   visitedNodesAndCameFrom = aStar(this.startNode, this.endNode, this.boardGrid);
-
-  //   this.visitedNodesInOrder = visitedNodesAndCameFrom.visitedNodesInOrder;
-  //   this.cameFrom = visitedNodesAndCameFrom.cameFrom;
-  //   // this.drawVisitedNodesWithAnimation()
-  //   let visitedNodesInOrder = [...this.visitedNodesInOrder]
-
-  //   this.setStartNode(this.startNode)
-  //   while (visitedNodesInOrder.length) {
-  //     let currentNode = visitedNodesInOrder[0];
-  //     if (currentNode.nodeType !== "start" || currentNode.nodeType !== "end") {
-  //       currentNode.updateNodeTypeInstant("visited");
-  //     }
-  //     visitedNodesInOrder.shift();
-  //   }
-  //   this.setStartNode(this.startNode)
-  //   // drawPathWithAnimation();
-
-  //   let cameFrom = this.cameFrom;
-  //   let currentNode = this.endNode;
-  //   while (currentNode !== this.startNode) {
-  //     if (!(currentNode.id in cameFrom)) {
-  //       console.log("No Path Exist !!")
-  //       return;
-  //     }
-
-  //     if (currentNode != this.startNode && currentNode != this.endNode) {
-  //       currentNode.updateNodeTypeInstant("path");
-  //     }
-
-  //     let nextNodeId = cameFrom[currentNode.id]
-  //     let nextNodeIdRow = nextNodeId.split("-")[0]
-  //     let nextNodeIdCol = nextNodeId.split("-")[1]
-
-  //     currentNode = this.boardGrid[nextNodeIdRow][nextNodeIdCol]
-  //   }
-  // }
-
   setPathAlgoSpeed(newSpeed) {
     this._speedChanged = true
     if (newSpeed === 60) {
@@ -814,13 +641,9 @@ export default class Board {
   handlePathAlgoSpeed() {
     if (this.speed === "fast") {
       return 0;
-      return 10;
-      return 16.66;
-      return 0;
     }
     if (this.speed === "medium") {
       return 33.33;
-      return 25;
     }
 
     return 100;
@@ -828,7 +651,6 @@ export default class Board {
 
   removeDisable() {
     let disabledElements = document.querySelectorAll(".disabled");
-    console.log(disabledElements)
     disabledElements.forEach((element) => {
       element.classList.remove("disabled")
     })
@@ -838,8 +660,7 @@ export default class Board {
     this.boardState = "idle";
     this._skipAnimation = false;
     let skipBtn = document.querySelector(".skip-btn")
-    skipBtn.dataset.active = "false"
+    if (skipBtn) skipBtn.dataset.active = "false"
     this.removeDisable()
   }
-
 }
