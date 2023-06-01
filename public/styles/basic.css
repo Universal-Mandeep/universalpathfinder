@@ -313,8 +313,9 @@ nav{
 }
 
 .clear-board-btn>.dropdown-list{
-  right: -1rem;
-  top: 2rem;
+  /* position: fixed; */
+  right: -2.5rem;
+  top: 2.10rem;
 }
 
 .speed-svg
@@ -330,11 +331,13 @@ nav{
   height: 18px;
   width: 18px;
   fill: #646669;
+  cursor: pointer;
 }
 .info-svg{
   height: 16px;
   width: 16px;
   fill: #646669;
+  cursor: pointer;
 }
 
 
@@ -756,7 +759,6 @@ nav{
   gap: 15px;
   margin-left: 5px;
   
-  cursor: pointer;
   user-select: none;
 }
 
@@ -769,14 +771,15 @@ nav{
   justify-content: flex-end;
 }
 
-.info-card>.header>.info-tab-label,
-.info-card>.footer>div{
+.info-card>.header>.info-tab-label{
   padding: 5px;
   font-size: 12px;
   font-weight: 600;
   font-family: 'Lexend Deca', sans-serif;
   color: #646669;
   transition: 0.25s ease-in-out;
+  cursor: pointer;
+
 }
 
 .info-card>.body{
@@ -887,15 +890,6 @@ nav{
 }
 
 
-
-.info-card>.footer>div{
-  background-color: var(--nav-options-background);
-  margin-right: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
-
-
 .info-node-container{
   margin: 5px;
   display: flex;
@@ -983,6 +977,7 @@ nav{
   box-shadow:  #161b1d 1px 1px 2px;
   
   cursor: pointer;
+  user-select: none;
 }
 
 

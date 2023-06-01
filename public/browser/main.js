@@ -12,6 +12,7 @@ dropdownList.forEach(dropdown => {
   dropdown.addEventListener("click", e => {
     const activeDropdown = document.querySelector('[data-dropdown-active = "true"]');
 
+    closeInfoCard()
     if (activeDropdown == null) {
       dropdown.dataset.dropdownActive = "true";
     }
@@ -37,12 +38,17 @@ dropdownList.forEach(dropdown => {
   })
 })
 
-function closeAllDropdown() {
+function closeAllDropdown(notCloseInfoCard = false) {
   const activeDropdownList = document.querySelectorAll('[data-dropdown-active = "true"]');
   for (let activeDropdown of activeDropdownList) {
     activeDropdown.dataset.dropdownActive = "false";
   }
-  closeInfoCard()
+  // if (!notCloseInfoCard) closeInfoCard()
+}
+
+function closeDropdownAndInfoCard() {
+  closeAllDropdown();
+  closeInfoCard();
 }
 
 function closeInfoCard() {
@@ -71,8 +77,8 @@ function handleClearDropdown(clearElement) {
 
 
 document.querySelector(".visualize-btn").addEventListener("click", e => {
-  closeAllDropdown();
-  disbaleElements()
+  closeDropdownAndInfoCard()
+  disbaleElements();
   board.visualizePathAlgo()
 })
 
@@ -83,16 +89,20 @@ function handleSkip() {
     let skipBtn = document.querySelector(".skip-btn")
     skipBtn.dataset.active = "false"
     board._skipAnimation = false;
-    // }, 200)
   }, 100)
-
 }
+
+document.querySelector("nav").addEventListener("click", (e) => {
+  // console.log(e.target)
+  if (e.target.classList.contains("nav-items")) {
+    // console.log("nav background")
+    closeDropdownAndInfoCard();
+  }
+})
 
 document.querySelector(".skip-btn").addEventListener("click", handleSkip)
 
 
-
-// Disable Elements
 function disbaleElements() {
   const checkpointButton = document.querySelector(".checkpoint-btn");
   const diagonalButton = document.querySelector(".diagonal-btn");
@@ -111,9 +121,9 @@ function disbaleElements() {
   })
 }
 
-// checkpoint
 const checkpointButton = document.querySelector(".checkpoint-btn");
 checkpointButton.addEventListener("click", e => {
+  closeDropdownAndInfoCard();
   // if (checkpointButton.classList.contains("disabled")) return;
   if (board.boardState != "idle") return;
 
@@ -131,6 +141,7 @@ checkpointButton.addEventListener("click", e => {
 
 const diagonalButton = document.querySelector(".diagonal-btn");
 diagonalButton.addEventListener("click", e => {
+  closeDropdownAndInfoCard();
   if (board.boardState != "idle") return;
 
   if (board.boardProperties.hasDiagonalPathMovement) {
@@ -145,10 +156,10 @@ diagonalButton.addEventListener("click", e => {
 })
 
 
-//* speed controls 
 const speedvalues = document.querySelectorAll(".speed-value");
 speedvalues.forEach(speedvalue => {
   speedvalue.addEventListener("click", e => {
+    closeDropdownAndInfoCard();
     if (!speedvalue.classList.contains("selected")) {
       document.querySelector(".speed-value.selected").classList.remove("selected");
       speedvalue.classList.add("selected");
@@ -159,7 +170,6 @@ speedvalues.forEach(speedvalue => {
 });
 
 
-// info-btn
 const infoBtn = document.querySelector(".info-btn");
 infoBtn.addEventListener("click", e => {
   e.preventDefault()
@@ -184,6 +194,7 @@ infoBtn.addEventListener("click", e => {
   else if (e.target.closest(".info-btn") && !e.target.closest(".info-card")) {
     if (infoCard.dataset.open === "true") infoCard.dataset.open = "false"
     else infoCard.dataset.open = "true"
+    closeAllDropdown(true)
 
     sideNav.innerHTML = mapInfo["details"][0]
     descriptionContainer.innerHTML = mapInfo["details"][1]
@@ -300,7 +311,7 @@ let mapInfo = {
     <div class="heading-link" data-linkTo="info-RandomBlock">Random Blocks</div>
     <div class="heading-link" data-linkTo="info-RandomWeight">Random Weights</div>`,
     `<div class="container" id="info-Kruskal">
-      <div class="heading">Kruskal's Algorithm</div>
+      <div class="heading">Randomized Kruskal's Algorithm</div>
       <div class="description">
         <div>
           This algorithm is a randomized version of Kruskal's algorithm. Each time it create a randomized MST(Minimum Spanning Tree).
@@ -318,7 +329,7 @@ let mapInfo = {
       </div>
     </div>
     <div class="container" id="info-Prim">
-      <div class="heading">Prim's Algorithm</div>
+      <div class="heading">Randomized Prim's Algorithm</div>
       <div class="description">
         <div>
           This algorithm is a randomized version of Prims's algorithm. It creates a randomized MST(Minimum Spanning Tree) of the given graph.
@@ -434,14 +445,14 @@ let mouseBtn = "left"
 let boardGrid = document.getElementById("board-grid");
 boardGrid.addEventListener("mousedown", e => {
 
-  closeAllDropdown()
+  closeDropdownAndInfoCard()
   e.preventDefault()
   if (board.boardState == "generatingMaze") {
     board.toastMsg("Wait for Maze Generation to finish !")
     return false;
   }
   else if (board.boardState != "idle") {
-    board.toastMsg("Wait for previous animation to finish or skip")
+    board.toastMsg("Wait for animation to finish or skip")
     return false;
   }
 
@@ -659,12 +670,12 @@ document.addEventListener("keyup", e => {
     randomizedKruskals(board.boardGrid, resetBoardAfterMazeAnimation);
   }
   if (e.key === "v") {
-    closeAllDropdown();
+    closeDropdownAndInfoCard();
     disbaleElements()
     board.visualizePathAlgo()
   }
   if (e.key === "a") {
-    closeAllDropdown();
+    closeDropdownAndInfoCard();
     disbaleElements()
     board.selectedPathAlgo = "astar"
     board.visualizePathAlgo()
