@@ -1,87 +1,51 @@
 <!--TODO's  -->
 
--clean main.js drag: done, dropdown: done
--add alt + left click to get quick info of the node
-
--Think of adding checkpoint
-
-# v.0.3.0
-
-- Node class
-- Board class
-  - visualizedPathAlogAnimate
-  - drawPathAlgoInstant
-- Path Algo
-  - Dijkstra
-- Maze Algo
-- Other
-
-  - [+] Speed: "fast", "medium", "slow" for path algorithms
-  - Clear:
-
-- [ ] Board state:
-
-  - idle
-  - exploringGraph
-  - generatingPath
-  - generatingMaze
-
-- [ ] Board status:
-
-  - pure: clean/ has
-  - dirty: has something on graph (path drawn / maze drawn)
-  - modified: has been modified to new state
-
+# v.0.3.2
 - Features:
-  - Drag: Done
-
-## NOTE:
-
-- info updation of neighbors is now performed in board in updateNeighborForPathAlgo member function
-
+  - Node Drag: Done
+  - Instant Path: Done
+  - Dynamic Speed Control: Done
+  - Checkpoint: Done
+  - Diagonal Movement: Done
+  - Path Alog: Done
+  - Maze Generation Algo: Done
+  
 ## TODO:
 
 - mouse event
-  [+] mouse drag event:
+  [+] mouse drag event
   [+] nav bar button integration
-  [ ] side pannel button integration
 
 - visual:
-  [ ] connect block node: making them look one sigle big block
-  [ ] start, end and other special Nodes
+  [+] connect block node: making them look one big block
+  [+] start, end and other special Nodes
   . [+] weighted Node
-  <!-- [ ] Glich when adding weight to path... it animate slowly due to slow path animation -->
-
-  . [ ] start Node animation
-  . [ ] end Node animation: rotating circle
+  <!-- [+] Glich when adding weight to path... it animate slowly due to slow path animation -->
 
 - add animations:
-
   - Instant animatiton:
-    [+] on drag of start and end nodes
-    [ ] on toggle of diagonal button
+    [+] on drag of start, checkpoint and end nodes
+    [+] on toggle of diagonal/checkpoint button
     . [+] working
-    . [ ] link it to board state
-    [ ] on reset
+    . [+] link it to board state
+    [+] on reset
 
   - animate:
-    [+] when adding block,
-    [ ] start, end before starting...
-    [ ] During executions of the algos (both type)
-    [ ] Special node: when draged to new position they have 50% opacity and update position on drag release
-    [ ] animation for path: a continuous flow from start to end
-    . [ ] Use 2 rect bar with overflow hidden and one goes out of path block and other animate in... createing a visual of continuous path
+    [+] when adding block, weight
+    [+] start, end before starting...
+    [+] During executions of the algos (both type)
+    [+] animation for path: a continuous flow from start to end
 
 - board:
-  [ ] Board State: assign different state to each execution phase...
+  [+] Board State: assign different state to each execution phase...
 
 - Future upgrades:
-  [ ] Implement Frame Rate
-  [ ] Wieghted Node
-  . [ ] Customized weight value
-  [ ] Checkpoint:
-  . [ ] Single Checkpoint
-  . [ ] Multi Checkpoint
+  [+] Implement Frame Rate
+  [+] Wieghted Node
+  . [ !Future ] Customized weight value
+  [+] Checkpoint:
+  . [+] Single Checkpoint
+  . [ !Future ] Multi Checkpoint
   . . [ ] <!--? In continuity or Branch out -->
   . . [ ] In order they were added
   . . [ ] By Priority
@@ -89,41 +53,37 @@
   . . [ ] Connect the drag node to its nearest one
   . . <!--! By order and Priority can be grouped together: the first checkpoint has highest priority and the next one has one lower... as we only drag special nodes and they will remain on the board until deleted -->
 
-  [ ] Diagonals:
+  [+] Diagonals:
   . [+] Diagonal working
-  . [ ] Proper diagonal integration
-  [ ] Graphical representation
-  [ ] Add statistical values against time
-  [ ] Key binding:
+  . [+] Proper diagonal integration
+  [ !Future ] Add statistical values against time
+  [ !Future ] Key binding:
   . [ ] For navigation
   . [ ] For quick node info
 
 <!-- Bugs  -->
+  [+] Slow path animation on weighted nodes
+  [+] overlaping path animation
 
-## Bugs
-
-boardGrid[9][15] is unvisited.... how...??
-boardGrid[9][40] is unvisited.... how...??
-
-# Simple todo
+## Simpler todo
 
 -path algo
 [+] DIjkstra
 [+] A
 [+] Greedy Best First
-[ ] BFS
-[ ] DFS
+[+] BFS
+[+] DFS
 
 -maze algo
 [+] Randomized Kruskals
 [+] Randomized Prims
-[ ] Randomized DFS
-[ ] Random Blocks
-[ ] Random Weight
+[+] Randomized DFS
+[+] Random Blocks
+[+] Random Weight
 
 -Features
 [+] checkpoint
 [+] diagonal
 [+] speed
 [+] clear
-[ ] info
+[+] info
