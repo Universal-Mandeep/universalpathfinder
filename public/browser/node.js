@@ -61,6 +61,17 @@ export default class Node {
       this.makeWeighted()
       // return
     }
+    else if (newNodeType === "path" && this.nodeType == "path") {
+      this.linkedElement.classList.remove(this.nodeType)
+      this.linkedElement.dataset.animationType = "instant";
+
+      // this.nodeType = "path-2";
+
+
+      this.linkedElement.classList.add("path-2");
+      this.linkedElement.dataset.animationType = "animate";
+
+    }
     else {
       this.linkedElement.classList.remove(this.nodeType)
       if (newNodeType === "start" || newNodeType === "checkpoint" || newNodeType === "end" || newNodeType === "block") this.makeUnweighted();
@@ -69,6 +80,7 @@ export default class Node {
 
       this.nodeType = newNodeType;
       this.linkedElement.classList.add(newNodeType);
+      this.linkedElement.classList.remove("path-2")
     }
     this.linkedElement.classList.remove("unweighted-visited")
     this.linkedElement.classList.remove("unweighted-visited-2")
@@ -91,6 +103,8 @@ export default class Node {
 
   updateNodeTypeInstant(newNodeType) {
     this.linkedElement.classList.remove(this.nodeType)
+    this.linkedElement.classList.remove("path-2")
+
     this.nodeType = newNodeType;
 
     this.linkedElement.dataset.animationType = "instant";

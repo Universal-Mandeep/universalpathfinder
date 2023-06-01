@@ -97,6 +97,9 @@ export default class Board {
     this.setStartNode(this.boardGrid[Math.floor(possibleRows / 2)][Math.floor(possibleColumns / 5)]);
     this.setEndNode(this.boardGrid[Math.floor(possibleRows / 2)][Math.floor(possibleColumns - (possibleColumns / 5))]);
 
+    // To avoid lazy load for the weight img
+    this.boardGrid[0][0].makeWeighted()
+    this.boardGrid[0][0].makeUnweighted()
   }
 
   createNodeGrid() {
@@ -322,6 +325,7 @@ export default class Board {
   handleWarning() {
     if (this.selectedPathAlgo == null) {
       this.toastMsg("Select a path algorithm...")
+      this.removeDisable()
       return false;
     }
     else if (this.boardState == "generatingMaze") {
@@ -329,7 +333,7 @@ export default class Board {
       return false;
     }
     else if (this.boardState != "idle") {
-      this.toastMsg("Wait for previous animation to finish or skip")
+      this.toastMsg("Wait for animation to finish or skip")
       return false;
     }
     return true;

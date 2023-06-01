@@ -1,0 +1,9 @@
+<svg width="149" height="150" viewBox="0 0 149 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="logo">
+<circle id="node-center" cx="25" cy="75" r="25" fill="#F3F3F3"/>
+<circle id="node-top" cx="124" cy="25" r="25" fill="#F3F3F3"/>
+<path id="node-bottom" d="M149 125C149 138.807 137.807 150 124 150C110.193 150 99 138.807 99 125C99 111.193 110.193 100 124 100C137.807 100 149 111.193 149 125Z" fill="#F3F3F3"/>
+<line id="edge-1" x1="55.1043" y1="56.4029" x2="89.7627" y2="38.8957" stroke="#F3F3F3" stroke-width="5" stroke-linecap="round"/>
+<line id="edge-2" x1="57.3587" y1="97.0757" x2="90.2695" y2="113.7" stroke="#F3F3F3" stroke-width="5" stroke-linecap="round"/>
+</g>
+</svg>
